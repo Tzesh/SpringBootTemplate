@@ -1,9 +1,6 @@
 package com.tzesh.springtemplate.base.response;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,8 +12,8 @@ import java.time.LocalDateTime;
  * BaseResponse is a generic class that is used to store data about responses.
  * @see Serializable
  */
-@Getter
-@Setter
+@Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BaseResponse<T> implements Serializable {

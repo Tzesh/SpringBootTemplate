@@ -16,13 +16,13 @@ import java.time.LocalDateTime;
 @Getter
 @Setter
 public class BaseAuditableFields {
-    @Column(name = "ID_CREATED_BY", length = 50)
+    @Column(name = "CREATED_BY", length = 50)
     private String createdBy;
 
     @Column(name = "DT_CREATED_DATE")
     private LocalDateTime createdDate;
 
-    @Column(name = "ID_UPDATED_BY", length = 50)
+    @Column(name = "UPDATED_BY", length = 50)
     private String updatedBy;
 
     @Column(name = "DT_UPDATED_DATE")

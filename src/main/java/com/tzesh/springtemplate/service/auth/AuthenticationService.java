@@ -7,12 +7,14 @@ import com.tzesh.springtemplate.enumerator.auth.RoleEnum;
 import com.tzesh.springtemplate.enumerator.auth.TokenEnum;
 import com.tzesh.springtemplate.repository.auth.TokenRepository;
 import com.tzesh.springtemplate.repository.UserRepository;
+import com.tzesh.springtemplate.request.auth.AuthorizationRequest;
 import com.tzesh.springtemplate.request.auth.LoginRequest;
 import com.tzesh.springtemplate.request.auth.RegisterRequest;
 import com.tzesh.springtemplate.response.auth.AuthenticationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +36,8 @@ import java.io.IOException;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+    @Value("${security.jwt.authorization-key}")
+    private String authorizationKey;
     private final UserRepository repository;
     private final TokenRepository tokenRepository;
     private final PasswordEncoder passwordEncoder;
@@ -44,6 +48,8 @@ public class AuthenticationService {
      * Register user
      * @param request Register request
      * @return AuthenticationResponse
+     *          @see RegisterRequest
+     * @throws RuntimeException if username or email already exists
      */
     public AuthenticationResponse register(RegisterRequest request) {
         // check if username or email already exists
@@ -57,7 +63,7 @@ public class AuthenticationService {
                 .email(request.email())
                 .name(request.name())
                 .password(passwordEncoder.encode(request.password()))
-                .roleEnum(RoleEnum.USER)
+                .role(RoleEnum.USER)
                 .build();
 
         // save user
@@ -83,6 +89,7 @@ public class AuthenticationService {
      * Login user
      * @param request Login request
      * @return AuthenticationResponse
+     *         @see LoginRequest
      */
     public AuthenticationResponse login(LoginRequest request) {
         authenticationManager.authenticate(
@@ -193,4 +200,46 @@ public class AuthenticationService {
             }
         }
     }
+
+    /**
+     * Authorize user to the role
+     * @param request Authorization request
+     *                @see AuthorizationRequest
+     * @return AuthenticationResponse
+     *               @see AuthenticationResponse
+     */
+    public AuthenticationResponse authorize(AuthorizationRequest request) {
+        // check if given secret is correct
+        if (!request.secret().equals(authorizationKey)) {
+            throw new RuntimeException("Secret is not correct");
+        }
+
+        // get user
+        var user = repository.findByUsername(request.username())
+                .orElseThrow(
+                        () -> new RuntimeException("User not found")
+                );
+
+        // set role of user
+        user.setRole(request.role());
+
+        // save user
+        user = repository.save(user);
+
+        // generate jwt token
+        var jwtToken = jwtService.generateToken(user);
+
+        // generate refresh token
+        var refreshToken = jwtService.generateRefreshToken(user);
+
+        // save refresh token
+        saveUserToken(user, jwtToken);
+
+        // return response
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .refreshToken(refreshToken)
+                .build();
+    }
+
 }

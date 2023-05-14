@@ -1,6 +1,7 @@
 package com.tzesh.springtemplate.controller.auth;
 
 import com.tzesh.springtemplate.base.response.BaseResponse;
+import com.tzesh.springtemplate.request.auth.AuthorizationRequest;
 import com.tzesh.springtemplate.request.auth.LoginRequest;
 import com.tzesh.springtemplate.request.auth.RegisterRequest;
 import com.tzesh.springtemplate.response.auth.AuthenticationResponse;
@@ -60,5 +61,13 @@ public class AuthenticationController {
         authenticationService.refreshToken(request, response);
     }
 
+    @PostMapping("/authorize")
+    @Operation(summary = "Authorize the user", description = "Authorize the user and return the authentication response")
+    public ResponseEntity<BaseResponse<AuthenticationResponse>> authorize(@RequestBody @Valid AuthorizationRequest request) {
+        // call the login method in the authentication service
+        AuthenticationResponse response = authenticationService.authorize(request);
 
+        // return the response
+        return ResponseEntity.ok(BaseResponse.success(response).message("User authorized successfully"));
+    }
 }

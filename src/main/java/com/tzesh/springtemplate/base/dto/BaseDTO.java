@@ -9,4 +9,9 @@ import java.io.Serializable;
  * @author tzesh
  */
 public interface BaseDTO extends Serializable, Cloneable {
+    /**
+     * Get id of the DTO
+     * @return id of the DTO
+     */
+    abstract Long getId();
 }

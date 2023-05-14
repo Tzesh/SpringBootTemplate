@@ -52,4 +52,9 @@ public enum RoleEnum {
         authorities.add(new SimpleGrantedAuthority("ROLE_" + this.name()));
         return authorities;
     }
+
+    @Override
+    public String toString() {
+        return this.name();
+    }
 }
