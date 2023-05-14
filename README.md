@@ -25,7 +25,7 @@ A template for Spring Boot projects. This template includes the following featur
 13. To test the refresh token endpoint, click the `Authorize` button again and paste the refresh token in the `Value` field without the `Bearer` prefix
 
 ![Maven Run](https://imgur.com/lGSrRLL.png)
-![Spr](https://imgur.com/opbpdop.png)
+![Swagger UI](https://imgur.com/7Vug2XR.png)
 
 ## Contribute to this project
 If you want to contribute to this project, please create a pull request.
