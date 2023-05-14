@@ -31,6 +31,12 @@ public class SecurityConfiguration {
     private final AuthenticationProvider authenticationProvider;
     private final LogoutHandler logoutHandler;
 
+    /**
+     * Defines the bean used to manage authentication
+     * @param http HttpSecurity
+     * @return SecurityFilterChain
+     * @throws Exception if the authentication manager cannot be created
+     */
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http

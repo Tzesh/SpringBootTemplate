@@ -40,14 +40,14 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "TYPE", length = 50)
     @Enumerated(EnumType.STRING)
-    private RoleEnum roleEnum;
+    private RoleEnum role;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roleEnum.getAuthorities();
+        return role.getAuthorities();
     }
 
     @Override
