@@ -1,4 +1,4 @@
-package com.tzesh.springtemplate.enumerator.auth;
+package com.tzesh.springtemplate.enums.auth;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.tzesh.springtemplate.enumerator.auth.PermissionEnum.*;
+import static com.tzesh.springtemplate.enums.auth.PermissionEnum.*;
 
 /**
  * @author tzesh

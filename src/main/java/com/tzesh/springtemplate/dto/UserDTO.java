@@ -1,7 +1,7 @@
 package com.tzesh.springtemplate.dto;
 
 import com.tzesh.springtemplate.base.dto.BaseDTO;
-import com.tzesh.springtemplate.enumerator.auth.RoleEnum;
+import com.tzesh.springtemplate.enums.auth.RoleEnum;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

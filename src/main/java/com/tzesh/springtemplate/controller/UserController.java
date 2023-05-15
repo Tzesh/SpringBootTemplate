@@ -15,7 +15,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import static com.tzesh.springtemplate.base.response.BaseResponse.success;
+import java.util.List;
 
 /**
  * User Controller class for handling user requests
@@ -43,7 +43,7 @@ public class UserController {
         UserDTO userDTO = userService.createUser(request);
 
         // return the response
-        return ResponseEntity.status(HttpStatus.CREATED).body(success(userDTO).message("User created successfully"));
+        return BaseResponse.create(userDTO, HttpStatus.CREATED).message("User created successfully").build();
     }
 
     /**
@@ -53,12 +53,12 @@ public class UserController {
     @GetMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get all users", description = "Get all users and return the users")
-    public ResponseEntity<BaseResponse<Iterable<UserDTO>>> getAllUsers() {
+    public ResponseEntity<BaseResponse<List<UserDTO>>> getAllUsers() {
         // call the get all method in the user service
-        Iterable<UserDTO> userDTOs = userService.findAll();
+        List<UserDTO> userDTOList = userService.findAll();
 
         // return the response
-        return ResponseEntity.ok(success(userDTOs).message("Users retrieved successfully"));
+        return BaseResponse.ok(userDTOList).message("Users retrieved successfully").build();
     }
 
     /**
@@ -74,7 +74,7 @@ public class UserController {
         UserDTO userDTO = userService.findById(id);
 
         // return the response
-        return ResponseEntity.ok(success(userDTO).message("User retrieved successfully"));
+        return BaseResponse.ok(userDTO).message("User retrieved successfully").build();
     }
 
     /**
@@ -90,7 +90,7 @@ public class UserController {
         UserDTO userDTO = userService.deleteById(id);
 
         // return the response
-        return ResponseEntity.ok(success(userDTO).message("User deleted successfully"));
+        return BaseResponse.ok(userDTO).message("User deleted successfully").build();
     }
 
     /**
@@ -107,7 +107,7 @@ public class UserController {
         UserDTO userDTO = userService.updateUser(id, request);
 
         // return the response
-        return ResponseEntity.ok(success(userDTO).message("User updated successfully"));
+        return BaseResponse.ok(userDTO).message("User updated successfully").build();
     }
 
     /**
@@ -117,9 +117,11 @@ public class UserController {
     @GetMapping("/current")
     @Operation(summary = "Get the current user", description = "Get the current user and return the user")
     public ResponseEntity<BaseResponse<UserDTO>> getCurrentUser() {
+        // call the get current method in the user service
         UserDTO userDTO = userService.getCurrentUserDTO();
+
         // return the response with the current user
-        return ResponseEntity.ok(success(userDTO).message("User retrieved successfully"));
+        return BaseResponse.ok(userDTO).message("User retrieved successfully").build();
     }
 
     /**
@@ -131,6 +133,9 @@ public class UserController {
     @Operation(summary = "Update the current user", description = "Update the current user with the given details and return the user")
     public ResponseEntity<BaseResponse<UserDTO>> updateCurrentUser(@RequestBody @Valid UpdateUserRequest request) {
         // call the update method in the user service
-        return ResponseEntity.ok(success(userService.updateCurrentUser(request)).message("User updated successfully"));
+        UserDTO userDTO = userService.updateCurrentUser(request);
+
+        // return the response with the current user
+        return BaseResponse.ok(userDTO).message("User updated successfully").build();
     }
 }

@@ -1,8 +1,7 @@
 package com.tzesh.springtemplate.request.user;
 
-import com.tzesh.springtemplate.enumerator.auth.RoleEnum;
+import com.tzesh.springtemplate.enums.auth.RoleEnum;
 import jakarta.validation.constraints.Email;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.hibernate.validator.constraints.Length;
 

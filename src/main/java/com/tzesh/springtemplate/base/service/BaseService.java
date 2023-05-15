@@ -3,6 +3,9 @@ package com.tzesh.springtemplate.base.service;
 import com.tzesh.springtemplate.base.dto.BaseDTO;
 import com.tzesh.springtemplate.base.entity.BaseEntity;
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
+import com.tzesh.springtemplate.base.error.GenericErrorMessage;
+import com.tzesh.springtemplate.base.exception.BaseException;
+import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.base.mapper.BaseMapper;
 
 import jakarta.persistence.MappedSuperclass;
@@ -17,15 +20,16 @@ import java.util.List;
 
 /**
  * Base service for all services in the application
+ *
  * @param <E> Entity
- *           @see BaseEntity
  * @param <D> DTO
- *           @see BaseDTO
  * @param <R> Repository
- *           @see JpaRepository
  * @param <M> Mapper
- *           @see BaseMapper
  * @author tzesh
+ * @see BaseEntity
+ * @see BaseDTO
+ * @see JpaRepository
+ * @see BaseMapper
  */
 @MappedSuperclass
 @Getter
@@ -33,12 +37,13 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
     protected final R repository;
     protected final M mapper;
     protected final UserDetailsService userDetailsService;
-
+    protected final String subject = this.getClass().getSimpleName().replace("Service", "");
 
     /**
      * Constructor for the service
+     *
      * @param repository Repository for the service
-     * @param service UserDetailsService for the service
+     * @param service    UserDetailsService for the service
      */
     public BaseService(R repository, UserDetailsService service) {
         this.mapper = initializeMapper();
@@ -48,12 +53,14 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
 
     /**
      * Initialize mapper for the service
+     *
      * @return class of the mapper to be initialized
      */
     protected abstract M initializeMapper();
 
     /**
      * Find entity by id
+     *
      * @param id id of the entity
      * @return Entity
      */
@@ -67,6 +74,7 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
 
     /**
      * Get entities list
+     *
      * @return List of entities
      */
     public List<D> findAll() {
@@ -76,6 +84,7 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
 
     /**
      * Save entity
+     *
      * @param dto DTO of the entity
      * @return Entity
      */
@@ -96,8 +105,7 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
 
             // set created date
             auditableFields.setCreatedDate(LocalDateTime.now());
-        }
-        else {
+        } else {
             // check if the entity exists
             this.checkIfEntityExists(dto.getId());
 
@@ -118,11 +126,12 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
         entity.setBaseAuditableFields(auditableFields);
 
         // save the entity to the database and return the mapped dto
-        return mapper.toDTO(repository.save(mapper.toEntity(dto)));
+        return mapper.toDTO(this.trySave(mapper.toEntity(dto)));
     }
 
     /**
      * Delete entity by id
+     *
      * @param id id of the entity
      */
     public D deleteById(Long id) {
@@ -141,21 +150,44 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
 
     /**
      * Check if the entity exists
+     *
      * @param id id of the entity
      * @throws RuntimeException if the entity does not exist
      */
     protected void checkIfEntityExists(Long id) {
         // check if the entity exists
         if (!repository.existsById(id))
-            throw new RuntimeException("Entity with id " + id + " does not exist");
+            throw new NotFoundException(
+                    GenericErrorMessage.builder()
+                            .message(String.format("%s with id %d not found", subject, id))
+                            .build());
     }
 
     /**
      * Get current user from the security context
+     *
      * @return username of the current user
      */
     protected String getCurrentUser() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
+    }
+
+    /**
+     * Try to save the entity
+     * If failed, throw a generic exception that consists of the subject
+     * @param entity Entity to be saved
+     * @return Entity
+     */
+    protected E trySave(E entity) {
+        try {
+            return this.repository.save(entity);
+        } catch (Exception e) {
+            throw new BaseException(
+                    GenericErrorMessage.builder()
+                            .message(String.format("Failed to save %s", subject))
+                            .build()
+            );
+        }
     }
 
 }

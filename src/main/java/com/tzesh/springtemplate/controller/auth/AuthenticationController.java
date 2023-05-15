@@ -40,7 +40,7 @@ public class AuthenticationController {
         AuthenticationResponse response = authenticationService.register(request);
 
         // return the response
-        return ResponseEntity.ok(BaseResponse.success(response).message("User registered successfully"));
+        return BaseResponse.created(response).message("User registered successfully").build();
     }
     @PostMapping("/login")
     @Operation(summary = "Login a user", description = "Login a user with the given details and return the authentication response")
@@ -49,16 +49,17 @@ public class AuthenticationController {
         AuthenticationResponse response = authenticationService.login(request);
 
         // return the response
-        return ResponseEntity.ok(BaseResponse.success(response).message("User logged in successfully"));
+        return BaseResponse.ok(response).message("User logged in successfully").build();
     }
 
     @PostMapping("/refresh-token")
     @Operation(summary = "Refresh the authentication token", description = "Refresh the authentication token and return the authentication response")
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
-        authenticationService.refreshToken(request, response);
+    public ResponseEntity<BaseResponse<AuthenticationResponse>> refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        // call the refresh token method in the authentication service
+        AuthenticationResponse refreshToken = authenticationService.refreshToken(request, response);
+
+        // return the response
+        return BaseResponse.ok(refreshToken).message("Token refreshed successfully").build();
     }
 
     @PostMapping("/authorize")
@@ -68,6 +69,6 @@ public class AuthenticationController {
         AuthenticationResponse response = authenticationService.authorize(request);
 
         // return the response
-        return ResponseEntity.ok(BaseResponse.success(response).message("User authorized successfully"));
+        return BaseResponse.ok(response).message("User authorized successfully").build();
     }
 }

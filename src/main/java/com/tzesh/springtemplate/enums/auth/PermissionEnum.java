@@ -1,4 +1,4 @@
-package com.tzesh.springtemplate.enumerator.auth;
+package com.tzesh.springtemplate.enums.auth;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;

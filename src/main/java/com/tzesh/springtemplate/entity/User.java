@@ -1,7 +1,7 @@
 package com.tzesh.springtemplate.entity;
 
 import com.tzesh.springtemplate.entity.auth.Token;
-import com.tzesh.springtemplate.enumerator.auth.RoleEnum;
+import com.tzesh.springtemplate.enums.auth.RoleEnum;
 import com.tzesh.springtemplate.base.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;

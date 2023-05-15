@@ -40,4 +40,12 @@ public abstract class BaseEntity implements Serializable, Cloneable, Entity {
         }
     }
 
+    /**
+     * Get the class name of the entity to use it in the error messages
+     * @return class name of the entity
+     */
+    public String getClassName() {
+        return this.getClass().getSimpleName();
+    }
+
 }

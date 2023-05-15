@@ -6,6 +6,10 @@ A template for Spring Boot projects. This template includes the following featur
 - Spring Security with JWT authentication and authorization also with refresh token
 - Swagger UI for API documentation and testing (http://localhost:8080/api/v1/swagger-ui/index.html) with authentication and authorization support
 - Spring Data JPA with PostgreSQL database integration
+- Exception handling mechanism with custom exceptions and exception handlers using `@ControllerAdvice`
+- Base entity and base DTO for common fields
+- Base service for common business logic
+- Custom `@PreAuthorize` annotation for authorization
 - Lombok for reducing boilerplate code
 - MapStruct for mapping DTOs to entities and vice versa
 
