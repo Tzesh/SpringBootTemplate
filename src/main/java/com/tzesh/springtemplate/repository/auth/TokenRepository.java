@@ -12,6 +12,11 @@ import java.util.Optional;
  * @author tzesh
  */
 public interface TokenRepository extends JpaRepository<Token, Long> {
+    /**
+     * Find all valid token by user
+     * @param id user id
+     * @return List of Token
+     */
     @Query(value = """
       select t from Token t inner join User u\s
       on t.user.id = u.id\s
@@ -19,5 +24,10 @@ public interface TokenRepository extends JpaRepository<Token, Long> {
       """)
     List<Token> findAllValidTokenByUser(Long id);
 
+    /**
+     * Find token by token
+     * @param token token
+     * @return Optional of Token
+     */
     Optional<Token> findByToken(String token);
 }

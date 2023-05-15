@@ -1,10 +1,11 @@
 package com.tzesh.springtemplate.service.auth;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import com.tzesh.springtemplate.base.error.GenericErrorMessage;
+import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.entity.auth.Token;
 import com.tzesh.springtemplate.entity.User;
-import com.tzesh.springtemplate.enumerator.auth.RoleEnum;
-import com.tzesh.springtemplate.enumerator.auth.TokenEnum;
+import com.tzesh.springtemplate.enums.auth.RoleEnum;
+import com.tzesh.springtemplate.enums.auth.TokenEnum;
 import com.tzesh.springtemplate.repository.auth.TokenRepository;
 import com.tzesh.springtemplate.repository.UserRepository;
 import com.tzesh.springtemplate.request.auth.AuthorizationRequest;
@@ -22,16 +23,18 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 
 /**
  * Authentication service for login and register
+ *
+ * @author tzesh
  * @see AuthenticationService
  * @see AuthenticationManager
  * @see PasswordEncoder
  * @see JwtService
  * @see UserRepository
  * @see TokenRepository
- * @author tzesh
  */
 @Service
 @RequiredArgsConstructor
@@ -46,10 +49,11 @@ public class AuthenticationService {
 
     /**
      * Register user
+     *
      * @param request Register request
      * @return AuthenticationResponse
-     *          @see RegisterRequest
      * @throws RuntimeException if username or email already exists
+     * @see RegisterRequest
      */
     public AuthenticationResponse register(RegisterRequest request) {
         // check if username or email already exists
@@ -87,9 +91,10 @@ public class AuthenticationService {
 
     /**
      * Login user
+     *
      * @param request Login request
      * @return AuthenticationResponse
-     *         @see LoginRequest
+     * @see LoginRequest
      */
     public AuthenticationResponse login(LoginRequest request) {
         authenticationManager.authenticate(
@@ -99,11 +104,17 @@ public class AuthenticationService {
                 )
         );
 
-        var user = repository.findByUsername(request.username())
-                .orElseThrow();
+        User user = repository.findByUsername(request.username())
+                .orElseThrow(
+                        () -> new NotFoundException(
+                                GenericErrorMessage.builder()
+                                        .message("User not found with username: " + request.username())
+                                        .build()
+                        )
+                );
 
-        var jwtToken = jwtService.generateToken(user);
-        var refreshToken = jwtService.generateRefreshToken(user);
+        String jwtToken = jwtService.generateToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
@@ -116,45 +127,53 @@ public class AuthenticationService {
 
     /**
      * Save user token
-     * @param user User
+     *
+     * @param user     User
      * @param jwtToken JWT token
      */
     private void saveUserToken(User user, String jwtToken) {
-        var token = Token.builder()
+        Token token = Token.builder()
                 .user(user)
                 .token(jwtToken)
                 .tokenType(TokenEnum.BEARER)
                 .expired(false)
                 .revoked(false)
                 .build();
+
         tokenRepository.save(token);
     }
 
     /**
      * Revoke all user tokens
+     *
      * @param user User
      */
     private void revokeAllUserTokens(User user) {
-        var validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+        // get all valid user tokens
+        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
+
+        // check if valid user tokens is empty
         if (validUserTokens.isEmpty())
             return;
+
+        // revoke all valid user tokens
         validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
         });
+
+        // save all valid user tokens
         tokenRepository.saveAll(validUserTokens);
     }
 
     /**
      * Refresh token
-     * @param request HTTP request
+     *
+     * @param request  HTTP request
      * @param response HTTP response
      * @throws IOException IOException
      */
-    public void refreshToken(
-            HttpServletRequest request,
-            HttpServletResponse response
-    ) throws IOException {
+    public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // get authorization header
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
 
@@ -163,9 +182,9 @@ public class AuthenticationService {
         final String username;
 
         // check if authorization header is null or not bearer
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             // return if authorization header is null or not bearer
-            return;
+            return null;
         }
 
         // get refresh token and username
@@ -175,13 +194,19 @@ public class AuthenticationService {
         // check if username is null
         if (username != null) {
             // get user
-            var user = this.repository.findByUsername(username)
-                    .orElseThrow();
+            User user = this.repository.findByUsername(username)
+                    .orElseThrow(
+                            () -> new NotFoundException(
+                                    GenericErrorMessage.builder()
+                                            .message("User not found with username: " + username)
+                                            .build()
+                            )
+                    );
 
             // check if refresh token is valid
             if (jwtService.isTokenValid(refreshToken, user)) {
                 // generate new access token
-                var accessToken = jwtService.generateToken(user);
+                String accessToken = jwtService.generateToken(user);
 
                 // revoke all user tokens
                 revokeAllUserTokens(user);
@@ -189,24 +214,25 @@ public class AuthenticationService {
                 // save new refresh token
                 saveUserToken(user, accessToken);
 
-                // generate authentication response
-                var authResponse = AuthenticationResponse.builder()
+                // return response
+                return AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();
-
-                // write response
-                new ObjectMapper().writeValue(response.getOutputStream(), authResponse);
             }
         }
+
+        // return null if username is null
+        return null;
     }
 
     /**
      * Authorize user to the role
+     *
      * @param request Authorization request
-     *                @see AuthorizationRequest
      * @return AuthenticationResponse
-     *               @see AuthenticationResponse
+     * @see AuthorizationRequest
+     * @see AuthenticationResponse
      */
     public AuthenticationResponse authorize(AuthorizationRequest request) {
         // check if given secret is correct
@@ -215,9 +241,13 @@ public class AuthenticationService {
         }
 
         // get user
-        var user = repository.findByUsername(request.username())
+        User user = repository.findByUsername(request.username())
                 .orElseThrow(
-                        () -> new RuntimeException("User not found")
+                        () -> new NotFoundException(
+                                GenericErrorMessage.builder()
+                                        .message("User not found with username: " + request.username())
+                                        .build()
+                        )
                 );
 
         // set role of user
@@ -227,10 +257,10 @@ public class AuthenticationService {
         user = repository.save(user);
 
         // generate jwt token
-        var jwtToken = jwtService.generateToken(user);
+        String jwtToken = jwtService.generateToken(user);
 
         // generate refresh token
-        var refreshToken = jwtService.generateRefreshToken(user);
+        String refreshToken = jwtService.generateRefreshToken(user);
 
         // save refresh token
         saveUserToken(user, jwtToken);

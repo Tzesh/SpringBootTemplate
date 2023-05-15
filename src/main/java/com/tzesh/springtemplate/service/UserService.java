@@ -1,10 +1,14 @@
 package com.tzesh.springtemplate.service;
 
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
+import com.tzesh.springtemplate.base.error.GenericErrorMessage;
+import com.tzesh.springtemplate.base.exception.BaseException;
+import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.base.service.BaseService;
 import com.tzesh.springtemplate.dto.UserDTO;
 import com.tzesh.springtemplate.entity.User;
-import com.tzesh.springtemplate.enumerator.auth.RoleEnum;
+import com.tzesh.springtemplate.enums.UserErrorMessage;
+import com.tzesh.springtemplate.enums.auth.RoleEnum;
 import com.tzesh.springtemplate.mapper.UserMapper;
 import com.tzesh.springtemplate.repository.UserRepository;
 import com.tzesh.springtemplate.request.user.CreateUserRequest;
@@ -15,7 +19,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 /**
@@ -47,28 +50,26 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
 
     /**
      * Update current user
+     * @param request Update user request
+     *                @see UpdateUserRequest
+     * @return UserDTO
+     * @throws RuntimeException if email already exists
      */
     public UserDTO updateCurrentUser(UpdateUserRequest request) {
         // get current user
         User user = repository.findByUsername(this.getCurrentUser()).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new NotFoundException(
+                        GenericErrorMessage.builder().message(
+                                UserErrorMessage.USER_NOT_FOUND.getMessage()
+                        ).build()
+                )
         );
 
-        // check if email is different
-        if (!user.getEmail().equals(request.email())) {
-            // control if email is already used
-            if (repository.existsByUsernameOrEmail(null, request.email())) {
-                throw new RuntimeException("Email already exists");
-            }
-        }
+        // get current user id
+        Long id = user.getId();
 
         // update user
-        user.setName(request.name());
-        user.setEmail(request.email());
-        user.setPassword(passwordEncoder.encode(request.password()));
-
-        // save user and return
-        return mapper.toDTO(repository.save(user));
+        return this.updateUser(id, request);
     }
 
     /**
@@ -78,7 +79,11 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
     public UserDTO getCurrentUserDTO() {
         // get user
         User user = repository.findByUsername(this.getCurrentUser()).orElseThrow(
-                () -> new RuntimeException("User not found")
+                () -> new NotFoundException(
+                        GenericErrorMessage.builder().message(
+                                UserErrorMessage.USER_NOT_FOUND.getMessage()
+                        ).build()
+                )
         );
 
         // return user
@@ -93,7 +98,11 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
     public UserDTO createUser(CreateUserRequest request) {
         // control if email or username is already used
         if (repository.existsByUsernameOrEmail(request.username(), request.email())) {
-            throw new RuntimeException("Email or username already exists");
+            throw new BaseException(
+                    GenericErrorMessage.builder().message(
+                            UserErrorMessage.USER_ALREADY_EXISTS.getMessage()
+                    ).build()
+            );
         }
 
         // create user
@@ -115,7 +124,7 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
         user.setBaseAuditableFields(baseAuditableFields);
 
         // save user and return
-        return mapper.toDTO(repository.save(user));
+        return mapper.toDTO(this.trySave(user));
     }
 
     /**
@@ -136,7 +145,11 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
         if (!user.getEmail().equals(request.email())) {
             // control if email is already used
             if (repository.existsByUsernameOrEmail(null, request.email())) {
-                throw new RuntimeException("Email already exists");
+                throw new BaseException(
+                        GenericErrorMessage.builder().message(
+                                UserErrorMessage.USER_ALREADY_EXISTS.getMessage()
+                        ).build()
+                );
             }
         }
 
@@ -153,6 +166,6 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
         baseAuditableFields.setUpdatedDate(LocalDateTime.now());
 
         // save user and return
-        return mapper.toDTO(repository.save(user));
+        return mapper.toDTO(this.trySave(user));
     }
 }
