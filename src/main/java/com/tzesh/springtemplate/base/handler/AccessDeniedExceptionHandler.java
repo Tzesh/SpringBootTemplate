@@ -1,4 +1,4 @@
-package com.tzesh.springtemplate.handler;
+package com.tzesh.springtemplate.base.handler;
 
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.response.BaseResponse;
@@ -33,8 +33,7 @@ public class AccessDeniedExceptionHandler extends ResponseEntityExceptionHandler
      * @return ResponseEntity
      */
     @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<BaseResponse<GenericErrorMessage>> handleAccessDeniedException(
-            Exception ex, WebRequest request) {
+    public ResponseEntity<BaseResponse<GenericErrorMessage>> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
         String message = ex.getMessage();
         String description = request.getDescription(false);
 

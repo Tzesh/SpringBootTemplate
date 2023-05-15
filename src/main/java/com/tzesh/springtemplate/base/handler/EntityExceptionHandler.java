@@ -1,13 +1,17 @@
-package com.tzesh.springtemplate.handler;
+package com.tzesh.springtemplate.base.handler;
 
-import com.tzesh.springtemplate.base.error.BaseErrorMessage;
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.base.response.BaseResponse;
+import jakarta.validation.ConstraintViolationException;
+import org.springframework.core.Ordered;
+import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.AccessDeniedException;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestController;
@@ -15,6 +19,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 /**
  * EntityExceptionHandler is a class to handle exceptions
@@ -28,6 +33,7 @@ import java.time.LocalDateTime;
  */
 @RestController
 @ControllerAdvice
+@Order(Ordered.HIGHEST_PRECEDENCE)
 public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
@@ -62,5 +68,18 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, webRequest.getContextPath());
 
         return BaseResponse.error(genericErrorMessage, HttpStatus.NOT_FOUND).build();
+    }
+
+    @Override
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        var errors = ex.getBindingResult().getFieldErrors().stream()
+                .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
+                .collect(Collectors.toList());
+
+        var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), "Validation Failed", errors.toString(), request.getContextPath());
+
+        var response = BaseResponse.error(genericErrorMessage, HttpStatus.BAD_REQUEST);
+
+        return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
 }
