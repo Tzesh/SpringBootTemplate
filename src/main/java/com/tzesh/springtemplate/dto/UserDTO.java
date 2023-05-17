@@ -14,7 +14,7 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @Data
 @Builder
-public class UserDTO implements BaseDTO {
+public class UserDTO extends BaseDTO {
     private Long id;
 
     @NotNull

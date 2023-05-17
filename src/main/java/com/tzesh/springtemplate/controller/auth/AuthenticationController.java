@@ -1,10 +1,10 @@
 package com.tzesh.springtemplate.controller.auth;
 
 import com.tzesh.springtemplate.base.response.BaseResponse;
+import com.tzesh.springtemplate.response.auth.AuthenticationResponse;
 import com.tzesh.springtemplate.request.auth.AuthorizationRequest;
 import com.tzesh.springtemplate.request.auth.LoginRequest;
 import com.tzesh.springtemplate.request.auth.RegisterRequest;
-import com.tzesh.springtemplate.response.auth.AuthenticationResponse;
 import com.tzesh.springtemplate.service.auth.AuthenticationService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -28,7 +28,7 @@ import java.io.IOException;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "Authentication Controller", description = "Authentication operations for users")
+@Tag(name = "1. Authentication Controller", description = "Authentication operations for users")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;

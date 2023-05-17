@@ -1,8 +1,10 @@
 package com.tzesh.springtemplate.base.response;
 
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 
 import java.io.Serial;
@@ -49,7 +51,7 @@ public class BaseResponse<T> implements Serializable {
      * @param <T> data type
      */
     public static <T> BaseResponse<T> ok(T data) {
-        return new BaseResponse<>(data, HttpStatus.OK, false);
+        return new BaseResponse<>(data, HttpStatus.OK, true);
     }
 
     /**
@@ -60,7 +62,7 @@ public class BaseResponse<T> implements Serializable {
      * @param <T> data type
      */
     public static <T> BaseResponse<T> create(T data, HttpStatus status) {
-        return new BaseResponse<>(data, status, false);
+        return new BaseResponse<>(data, status, true);
     }
 
     /**
@@ -70,7 +72,7 @@ public class BaseResponse<T> implements Serializable {
      * @param <T> data type
      */
     public static <T> BaseResponse<T> created(T data) {
-        return new BaseResponse<>(data, HttpStatus.CREATED, false);
+        return new BaseResponse<>(data, HttpStatus.CREATED, true);
     }
 
     /**

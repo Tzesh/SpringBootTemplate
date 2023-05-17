@@ -1,6 +1,5 @@
-package com.tzesh.springtemplate.base.entity.field;
+package com.tzesh.springtemplate.base.dto.field;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Embeddable;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,16 +15,13 @@ import java.time.LocalDateTime;
 @Embeddable
 @Getter
 @Setter
-public class BaseAuditableFields implements Serializable, Cloneable {
-    @Column(name = "CREATED_BY", length = 50)
+public class BaseDTOAuditableFields implements Serializable, Cloneable {
+
     private String createdBy;
 
-    @Column(name = "DT_CREATED_DATE")
     private LocalDateTime createdDate;
 
-    @Column(name = "UPDATED_BY", length = 50)
     private String updatedBy;
 
-    @Column(name = "DT_UPDATED_DATE")
     private LocalDateTime updatedDate;
 }

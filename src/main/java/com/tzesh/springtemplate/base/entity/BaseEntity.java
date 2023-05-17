@@ -1,7 +1,10 @@
 package com.tzesh.springtemplate.base.entity;
 
+
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
-import jakarta.persistence.*;
+import jakarta.persistence.Embedded;
+import jakarta.persistence.MappedSuperclass;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -14,7 +17,7 @@ import java.io.Serializable;
  * contains BaseAuditableFields
  * @see Serializable
  * @see Cloneable
- * @see Entity
+ * @see jakarta.persistence.Entity
  * @see BaseAuditableFields
  * @author tzesh
  */
@@ -27,7 +30,7 @@ public abstract class BaseEntity implements Serializable, Cloneable, Entity {
     private static final long serialVersionUID = 1L;
 
     @Embedded
-    private BaseAuditableFields baseAuditableFields;
+    private BaseAuditableFields auditableFields;
 
     @Override
     public BaseEntity clone() {

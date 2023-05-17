@@ -1,6 +1,8 @@
 package com.tzesh.springtemplate.service.auth;
 
+import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
+import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.entity.auth.Token;
 import com.tzesh.springtemplate.entity.User;
@@ -19,10 +21,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -58,7 +62,11 @@ public class AuthenticationService {
     public AuthenticationResponse register(RegisterRequest request) {
         // check if username or email already exists
         if (repository.existsByUsernameOrEmail(request.username(), request.email())) {
-            throw new RuntimeException("Username or email already exists");
+            throw new BaseException(
+                    GenericErrorMessage.builder()
+                            .message("Username or email already exists")
+                            .build()
+                    );
         }
 
         // create user
@@ -69,6 +77,18 @@ public class AuthenticationService {
                 .password(passwordEncoder.encode(request.password()))
                 .role(RoleEnum.USER)
                 .build();
+
+        // create auditable fields
+        BaseAuditableFields auditableFields = new BaseAuditableFields();
+
+        // set created by
+        auditableFields.setCreatedBy(user.getUsername());
+
+        // set created date
+        auditableFields.setCreatedDate(LocalDateTime.now());
+
+        // set base auditable fields
+        user.setAuditableFields(auditableFields);
 
         // save user
         User savedUser = repository.save(user);
@@ -253,6 +273,15 @@ public class AuthenticationService {
         // set role of user
         user.setRole(request.role());
 
+        // get auditable fields
+        BaseAuditableFields auditableFields = user.getAuditableFields();
+
+        // set updated by
+        auditableFields.setUpdatedBy(getCurrentUser());
+
+        // set updated date
+        auditableFields.setUpdatedDate(LocalDateTime.now());
+
         // save user
         user = repository.save(user);
 
@@ -270,6 +299,15 @@ public class AuthenticationService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
+    }
+
+    /**
+     * Get current user from the security context
+     *
+     * @return username of the current user
+     */
+    private String getCurrentUser() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
 }

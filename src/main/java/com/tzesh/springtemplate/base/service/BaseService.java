@@ -1,16 +1,15 @@
 package com.tzesh.springtemplate.base.service;
 
 import com.tzesh.springtemplate.base.dto.BaseDTO;
+import com.tzesh.springtemplate.base.dto.DTO;
 import com.tzesh.springtemplate.base.entity.BaseEntity;
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.base.mapper.BaseMapper;
-
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
-
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -27,7 +26,7 @@ import java.util.List;
  * @param <M> Mapper
  * @author tzesh
  * @see BaseEntity
- * @see BaseDTO
+ * @see DTO
  * @see JpaRepository
  * @see BaseMapper
  */
@@ -113,7 +112,7 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
             E existingEntity = repository.findById(dto.getId()).get();
 
             // set auditable fields
-            auditableFields = existingEntity.getBaseAuditableFields();
+            auditableFields = existingEntity.getAuditableFields();
 
             // set updated by field
             auditableFields.setUpdatedBy(getCurrentUser());
@@ -123,10 +122,10 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
         }
 
         // set auditable fields to the entity
-        entity.setBaseAuditableFields(auditableFields);
+        entity.setAuditableFields(auditableFields);
 
         // save the entity to the database and return the mapped dto
-        return mapper.toDTO(this.trySave(mapper.toEntity(dto)));
+        return mapper.toDTO(this.trySave(entity));
     }
 
     /**
@@ -168,7 +167,7 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
      *
      * @return username of the current user
      */
-    protected String getCurrentUser() {
+    public String getCurrentUser() {
         return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 

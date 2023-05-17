@@ -4,7 +4,6 @@ import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.base.response.BaseResponse;
-import jakarta.validation.ConstraintViolationException;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;

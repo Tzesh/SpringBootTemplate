@@ -1,5 +1,6 @@
 package com.tzesh.springtemplate.base.handler;
 
+
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.response.BaseResponse;
 import org.springframework.http.HttpStatus;

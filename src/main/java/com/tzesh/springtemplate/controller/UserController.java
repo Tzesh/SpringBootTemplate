@@ -8,6 +8,7 @@ import com.tzesh.springtemplate.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/users")
-@Tag(name = "User Controller", description = "User operations")
+@Tag(name = "2. User Controller", description = "User operations")
 @RequiredArgsConstructor
 @Validated
 public class UserController {
@@ -37,7 +38,7 @@ public class UserController {
      */
     @PostMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Create a new user", description = "Create a new user with the given details and return the user")
+    @Operation(summary = "Create a new user (ADMIN)", description = "Create a new user with the given details and return the user")
     public ResponseEntity<BaseResponse<UserDTO>> createUser(@RequestBody @Valid CreateUserRequest request) {
         // call the create method in the user service
         UserDTO userDTO = userService.createUser(request);
@@ -52,7 +53,7 @@ public class UserController {
      */
     @GetMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Get all users", description = "Get all users and return the users")
+    @Operation(summary = "Get all users (ADMIN)", description = "Get all users and return the users")
     public ResponseEntity<BaseResponse<List<UserDTO>>> getAllUsers() {
         // call the get all method in the user service
         List<UserDTO> userDTOList = userService.findAll();
@@ -68,8 +69,8 @@ public class UserController {
      */
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Get a user", description = "Get a user with the given id and return the user")
-    public ResponseEntity<BaseResponse<UserDTO>> getUser(@PathVariable Long id) {
+    @Operation(summary = "Get a user (ADMIN)", description = "Get a user with the given id and return the user")
+    public ResponseEntity<BaseResponse<UserDTO>> getUser(@PathVariable @NotNull Long id) {
         // call the get method in the user service
         UserDTO userDTO = userService.findById(id);
 
@@ -84,8 +85,8 @@ public class UserController {
      */
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Delete a user", description = "Delete a user with the given id and return the user")
-    public ResponseEntity<BaseResponse<UserDTO>> deleteUser(@PathVariable Long id) {
+    @Operation(summary = "Delete a user (ADMIN)", description = "Delete a user with the given id and return the user")
+    public ResponseEntity<BaseResponse<UserDTO>> deleteUser(@PathVariable @NotNull Long id) {
         // call the delete method in the user service
         UserDTO userDTO = userService.deleteById(id);
 
@@ -101,8 +102,8 @@ public class UserController {
      */
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
-    @Operation(summary = "Update a user", description = "Update a user with the given details and return the user")
-    public ResponseEntity<BaseResponse<UserDTO>> updateUser(@PathVariable Long id, @RequestBody @Valid UpdateUserRequest request) {
+    @Operation(summary = "Update a user (ADMIN)", description = "Update a user with the given details and return the user")
+    public ResponseEntity<BaseResponse<UserDTO>> updateUser(@PathVariable @NotNull Long id, @RequestBody @Valid UpdateUserRequest request) {
         // call the update method in the user service
         UserDTO userDTO = userService.updateUser(id, request);
 

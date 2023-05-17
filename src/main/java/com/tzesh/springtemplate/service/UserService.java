@@ -121,7 +121,7 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
         baseAuditableFields.setCreatedDate(LocalDateTime.now());
 
         // set base auditable fields to user
-        user.setBaseAuditableFields(baseAuditableFields);
+        user.setAuditableFields(baseAuditableFields);
 
         // save user and return
         return mapper.toDTO(this.trySave(user));
@@ -159,7 +159,7 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
         user.setPassword(passwordEncoder.encode(request.password()));
 
         // update base auditable fields
-        BaseAuditableFields baseAuditableFields = user.getBaseAuditableFields();
+        BaseAuditableFields baseAuditableFields = user.getAuditableFields();
 
         // set base auditable fields
         baseAuditableFields.setUpdatedBy(this.getCurrentUser());
