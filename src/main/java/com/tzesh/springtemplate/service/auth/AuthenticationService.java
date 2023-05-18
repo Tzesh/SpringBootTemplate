@@ -277,7 +277,7 @@ public class AuthenticationService {
         BaseAuditableFields auditableFields = user.getAuditableFields();
 
         // set updated by
-        auditableFields.setUpdatedBy(getCurrentUser());
+        auditableFields.setUpdatedBy("SYSTEM");
 
         // set updated date
         auditableFields.setUpdatedDate(LocalDateTime.now());
@@ -299,15 +299,6 @@ public class AuthenticationService {
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
                 .build();
-    }
-
-    /**
-     * Get current user from the security context
-     *
-     * @return username of the current user
-     */
-    private String getCurrentUser() {
-        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
 }
