@@ -6,17 +6,20 @@ import io.swagger.v3.core.util.Json;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 /**
  * @author tzesh
  */
 @Component
+@Slf4j
 public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
 
     /**
@@ -35,22 +38,29 @@ public class JwtAuthenticationEntryPoint implements AuthenticationEntryPoint {
         // set response content type
         response.setContentType("application/json");
 
+        // create error message
+        GenericErrorMessage genericErrorMessage = GenericErrorMessage.builder()
+                .details(authException.getMessage())
+                .timestamp(LocalDateTime.now())
+                .path(request.getRequestURI())
+                .message("Unauthorized to access this resource")
+                .build();
+
         // write response
         response.getWriter().write(
                 Json.pretty(
                         BaseResponse.builder()
                                 .status(HttpStatus.UNAUTHORIZED)
                                 .data(
-                                        GenericErrorMessage.builder()
-                                                .details(authException.getMessage())
-                                                .path(request.getRequestURI())
-                                                .message("Unauthorized to access this resource")
-                                                .build()
+                                        genericErrorMessage
                                 )
                                 .message("Unauthorized to access this resource")
                                 .build()
                 )
         );
+
+        // log error
+        log.error("Unauthorized to access this resource: {}", genericErrorMessage);
 
         // flush writer
         response.getWriter().flush();
