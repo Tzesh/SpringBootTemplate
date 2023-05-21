@@ -5,8 +5,8 @@ import com.tzesh.springtemplate.base.dto.DTO;
 import com.tzesh.springtemplate.base.entity.BaseEntity;
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
-import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
+import com.tzesh.springtemplate.base.exception.SaveFailedException;
 import com.tzesh.springtemplate.base.mapper.BaseMapper;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -181,7 +181,7 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
         try {
             return this.repository.save(entity);
         } catch (Exception e) {
-            throw new BaseException(
+            throw new SaveFailedException(
                     GenericErrorMessage.builder()
                             .message(String.format("Failed to save %s", subject))
                             .build()

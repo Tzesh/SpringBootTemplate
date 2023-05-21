@@ -3,6 +3,7 @@ package com.tzesh.springtemplate.base.handler;
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
+import com.tzesh.springtemplate.base.exception.SaveFailedException;
 import com.tzesh.springtemplate.base.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -75,6 +76,33 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         return BaseResponse.error(genericErrorMessage, HttpStatus.NOT_FOUND).build();
     }
 
+    /**
+     * handle SaveFailedException is a method to handle save failed exception
+     * @param e exception
+     * @param webRequest web request
+     * @return ResponseEntity
+     */
+    @ExceptionHandler
+    public final ResponseEntity<BaseResponse<GenericErrorMessage>> handleSaveFailedException(SaveFailedException e, WebRequest webRequest) {
+
+        String message = e.getErrorMessage().getMessage();
+        String description = webRequest.getDescription(false);
+
+        var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, webRequest.getContextPath());
+
+        log.error("Save failed exception: {}", genericErrorMessage);
+
+        return BaseResponse.error(genericErrorMessage, HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    /**
+     * handleMethodArgumentNotValid is a method to handle method argument not valid exception
+     * @param ex exception
+     * @param headers headers
+     * @param status status
+     * @param request request
+     * @return ResponseEntity
+     */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
         var errors = ex.getBindingResult().getFieldErrors().stream()
@@ -89,4 +117,6 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }
+
+
 }
