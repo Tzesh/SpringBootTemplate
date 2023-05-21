@@ -4,6 +4,7 @@ import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.base.response.BaseResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpHeaders;
@@ -33,6 +34,7 @@ import java.util.stream.Collectors;
 @RestController
 @ControllerAdvice
 @Order(Ordered.HIGHEST_PRECEDENCE)
+@Slf4j
 public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
@@ -48,6 +50,8 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         String description = webRequest.getDescription(false);
 
         var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, webRequest.getContextPath());
+
+        log.error("Base exception: {}", genericErrorMessage);
 
         return BaseResponse.error(genericErrorMessage, HttpStatus.INTERNAL_SERVER_ERROR).build();
     }
@@ -66,6 +70,8 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
 
         var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, webRequest.getContextPath());
 
+        log.error("Not found exception: {}", genericErrorMessage);
+
         return BaseResponse.error(genericErrorMessage, HttpStatus.NOT_FOUND).build();
     }
 
@@ -78,6 +84,8 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), "Validation Failed", errors.toString(), request.getContextPath());
 
         var response = BaseResponse.error(genericErrorMessage, HttpStatus.BAD_REQUEST);
+
+        log.error("Validation failed: {}", genericErrorMessage);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
     }

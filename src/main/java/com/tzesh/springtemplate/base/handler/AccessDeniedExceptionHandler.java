@@ -3,6 +3,7 @@ package com.tzesh.springtemplate.base.handler;
 
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.response.BaseResponse;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -25,6 +26,7 @@ import java.time.LocalDateTime;
  */
 @ControllerAdvice
 @RestController
+@Slf4j
 public class AccessDeniedExceptionHandler extends ResponseEntityExceptionHandler {
 
     /**
@@ -39,6 +41,8 @@ public class AccessDeniedExceptionHandler extends ResponseEntityExceptionHandler
         String description = request.getDescription(false);
 
         var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, request.getContextPath());
+
+        log.error("Access denied exception: {}", genericErrorMessage);
 
         return BaseResponse.error(genericErrorMessage, HttpStatus.FORBIDDEN).build();
     }
