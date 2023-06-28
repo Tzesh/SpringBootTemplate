@@ -1,4 +1,4 @@
-package com.tzesh.springtemplate.base.response;
+package com.tzesh.springtemplate.controller.base.response;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

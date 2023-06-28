@@ -1,6 +1,6 @@
 HELP.md
-target/
-!.mvn/wrapper/maven-wrapper.jar
+**/target/
+**/!.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
@@ -33,4 +33,4 @@ build/
 .vscode/
 
 # Ignore log files
-./logs/
+**/logs/

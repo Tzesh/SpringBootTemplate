@@ -1,4 +1,4 @@
-package com.tzesh.springtemplate.base.controller;
+package com.tzesh.springtemplate.controller.base.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.MappedSuperclass;

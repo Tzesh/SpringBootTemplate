@@ -1,15 +1,15 @@
-package com.tzesh.springtemplate.utils;
+package com.tzesh.springtemplate.controller.utils;
 
-import lombok.Data;
 import org.springframework.http.HttpHeaders;
+
+import java.util.LinkedHashMap;
 
 /**
  * JWT utility class to store the JWT token and add/remove it from the HTTP headers.
  * @author tzesh
  */
-@Data
 public class JwtUtil {
-    private static String accessToken;
+    public static String accessToken;
 
     /**
      * Add the JWT token to the HTTP headers
@@ -29,5 +29,11 @@ public class JwtUtil {
     public static HttpHeaders removeAuthorizationHeader(HttpHeaders headers) {
         headers.remove("Authorization");
         return headers;
+    }
+
+    public static void extractToken(Object data) {
+        LinkedHashMap<String, String> dataMap = (LinkedHashMap<String, String>) data;
+
+        accessToken = dataMap.get("access_token");
     }
 }

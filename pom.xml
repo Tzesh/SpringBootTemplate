@@ -10,11 +10,10 @@
     </parent>
 
     <groupId>com.tzesh</groupId>
-    <artifactId>SpringBootTemplate</artifactId>
+    <artifactId>spring-boot-template</artifactId>
     <version>1.0</version>
-
-    <name>SpringPortfolio</name>
-    <description>SpringPortfolio</description>
+    <name>spring-boot-template</name>
+    <description>spring-boot-template</description>
 
     <properties>
         <java.version>20</java.version>
@@ -171,6 +170,16 @@
         </dependency>
     </dependencies>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.tzesh</groupId>
+                <artifactId>SpringBootCore</artifactId>
+                <version>1.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <build>
         <plugins>
             <!-- Maven Resources -->
@@ -216,5 +225,12 @@
             </plugin>
         </plugins>
     </build>
+
+    <modules>
+        <module>spring-boot-template-api</module>
+        <module>spring-boot-template-mvc</module>
+    </modules>
+
+    <packaging>pom</packaging>
 
 </project>
