@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * JWT Authentication Filter class for authenticating JWT tokens
@@ -50,7 +51,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain
     ) throws ServletException, IOException {
         // if the request is for authentication, skip the filter
-        if (request.getServletPath().contains("/api/v1/auth")) {
+        if (request.getServletPath().contains("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -58,18 +59,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // get the token from the request header
         final String authHeader = request.getHeader("Authorization");
 
+        // get the token from the cookie
+        final String authCookie = Arrays.stream(request.getCookies())
+                .filter(c -> c.getName().equals("auth_token"))
+                .findFirst()
+                .map(c -> c.getValue())
+                .orElse(null);
+
         // initialize the token and username
         final String jwt;
         final String username;
 
         // if the token is not present or does not start with "Bearer ", skip the filter
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authCookie == null && (authHeader == null ||!authHeader.startsWith("Bearer "))) {
             filterChain.doFilter(request, response);
             return;
         }
 
         // extract the token from the header
-        jwt = authHeader.substring(7);
+        jwt = authHeader != null ? authHeader.substring(7) : authCookie;
 
         // extract the username from the token
         username = jwtService.extractUsername(jwt);

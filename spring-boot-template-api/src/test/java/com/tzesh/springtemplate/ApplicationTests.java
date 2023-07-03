@@ -5,9 +5,9 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.TestClassOrder;
 import org.springframework.boot.test.context.SpringBootTest;
 
-@SpringBootTest(classes = {SpringBootApiApplication.class})
+@SpringBootTest(classes = {Application.class})
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
-public class SpringBootApiApplicationTests {
+public class ApplicationTests {
 
     @Test
     void contextLoads() {

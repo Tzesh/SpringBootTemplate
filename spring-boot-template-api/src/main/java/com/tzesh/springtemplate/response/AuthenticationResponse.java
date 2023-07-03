@@ -1,4 +1,4 @@
-package com.tzesh.springtemplate.response.auth;
+package com.tzesh.springtemplate.response;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;

@@ -24,7 +24,7 @@ import java.util.List;
  * @author tzesh
  */
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/v1/users")
 @Tag(name = "2. User Controller", description = "User operations")
 @RequiredArgsConstructor
 @Validated

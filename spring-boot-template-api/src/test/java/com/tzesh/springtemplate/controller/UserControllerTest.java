@@ -1,6 +1,6 @@
 package com.tzesh.springtemplate.controller;
 
-import com.tzesh.springtemplate.SpringBootApiApplication;
+import com.tzesh.springtemplate.Application;
 import com.tzesh.springtemplate.controller.base.controller.ControllerTest;
 import com.tzesh.springtemplate.controller.base.response.SimplifiedResponse;
 import com.tzesh.springtemplate.controller.utils.JwtUtil;
@@ -16,7 +16,7 @@ import org.springframework.http.HttpStatus;
  * UserControllerTest class for testing UserController
  * @author tzesh
  */
-@SpringBootTest(classes = {SpringBootApiApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @Order(2)
@@ -26,7 +26,7 @@ public class UserControllerTest extends ControllerTest {
     TestRestTemplate template;
 
     public UserControllerTest() {
-        super("/users/");
+        super("/api/v1/users/");
     }
 
     @ParameterizedTest

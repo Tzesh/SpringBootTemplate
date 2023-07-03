@@ -13,7 +13,7 @@ import com.tzesh.springtemplate.repository.UserRepository;
 import com.tzesh.springtemplate.request.auth.AuthorizationRequest;
 import com.tzesh.springtemplate.request.auth.LoginRequest;
 import com.tzesh.springtemplate.request.auth.RegisterRequest;
-import com.tzesh.springtemplate.response.auth.AuthenticationResponse;
+import com.tzesh.springtemplate.response.AuthenticationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;

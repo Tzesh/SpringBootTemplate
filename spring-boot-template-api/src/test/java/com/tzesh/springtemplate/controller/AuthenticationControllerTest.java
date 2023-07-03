@@ -1,9 +1,8 @@
 package com.tzesh.springtemplate.controller;
 
-import com.tzesh.springtemplate.SpringBootApiApplication;
+import com.tzesh.springtemplate.Application;
 import com.tzesh.springtemplate.controller.base.controller.ControllerTest;
 import com.tzesh.springtemplate.controller.base.response.SimplifiedResponse;
-import com.tzesh.springtemplate.controller.utils.JwtUtil;
 import org.json.JSONObject;
 import org.junit.jupiter.api.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +17,7 @@ import org.springframework.http.MediaType;
  *
  * @author tzesh
  */
-@SpringBootTest(classes = {SpringBootApiApplication.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
+@SpringBootTest(classes = {Application.class}, webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 @TestClassOrder(ClassOrderer.OrderAnnotation.class)
 @Order(1)
@@ -27,7 +26,7 @@ public class AuthenticationControllerTest extends ControllerTest {
     TestRestTemplate template;
 
     public AuthenticationControllerTest() {
-        super("/auth/");
+        super("/api/v1/auth/");
     }
 
     @BeforeEach

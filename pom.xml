@@ -168,6 +168,12 @@
             <artifactId>h2</artifactId>
             <scope>runtime</scope>
         </dependency>
+
+        <!-- Spring Boot MVC -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+        </dependency>
     </dependencies>
 
     <dependencyManagement>
@@ -228,9 +234,7 @@
 
     <modules>
         <module>spring-boot-template-api</module>
-        <module>spring-boot-template-mvc</module>
     </modules>
 
     <packaging>pom</packaging>
-
 </project>

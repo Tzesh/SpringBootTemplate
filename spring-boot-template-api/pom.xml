@@ -40,7 +40,7 @@
 							<goal>repackage</goal>
 						</goals>
 						<configuration>
-							<mainClass>com.tzesh.springtemplate.SpringBootApiApplication</mainClass>
+							<mainClass>com.tzesh.springtemplate.Application</mainClass>
 						</configuration>
 					</execution>
 				</executions>
