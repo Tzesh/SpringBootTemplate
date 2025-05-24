@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:16
+    container_name: spring_template_postgres
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-spring_template_dev}
+      POSTGRES_USER: ${POSTGRES_USER:-development}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-T3st!ng}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - bridge_network
+
+  app:
+    build:
+      context: ./spring-boot-template-api
+      dockerfile: Dockerfile
+    container_name: spring_boot_template_api
+    depends_on:
+      - db
+      - redis
+    environment:
+      SPRING_PROFILES_ACTIVE: ${SPRING_PROFILES_ACTIVE:-dev}
+      SPRING_DATASOURCE_URL: ${SPRING_DATASOURCE_URL:-jdbc:postgresql://db:5432/spring_template_prod}
+      SPRING_DATASOURCE_USERNAME: ${POSTGRES_USER:-development}
+      SPRING_DATASOURCE_PASSWORD: ${POSTGRES_PASSWORD:-T3st!ng}
+    networks:
+        - bridge_network
+    ports:
+      - "8080:8080"
+
+  redis:
+    image: redis:7
+    container_name: spring_template_redis
+    ports:
+      - "6379:6379"
+    networks:
+      - bridge_network
+
+volumes:
+  postgres_data:
+
+networks:
+  bridge_network:
+    driver: bridge

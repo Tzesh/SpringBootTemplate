@@ -24,7 +24,6 @@ import java.time.LocalDateTime;
 public class BaseResponse<T> implements Serializable {
     @Serial
     private static final long serialVersionUID = 1L;
-
     private T data;
     private String message;
     private boolean success;

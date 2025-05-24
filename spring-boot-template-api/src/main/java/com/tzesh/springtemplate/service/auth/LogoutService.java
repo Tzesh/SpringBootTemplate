@@ -11,9 +11,10 @@ import org.springframework.stereotype.Service;
 
 /**
  * Logout service to revoke token
+ *
+ * @author tzesh
  * @see LogoutHandler
  * @see TokenRepository
- * @author tzesh
  */
 @Service
 @RequiredArgsConstructor
@@ -23,42 +24,34 @@ public class LogoutService implements LogoutHandler {
 
     /**
      * Revoke token
-     * @param request Request
-     * @param response Response
+     *
+     * @param request        Request
+     * @param response       Response
      * @param authentication Authentication
      */
     @Override
     public void logout(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            Authentication authentication
-    ) {
-        // get jwt token from header
+            final HttpServletRequest request,
+            final HttpServletResponse response,
+            final Authentication authentication) {
         final String authHeader = request.getHeader("Authorization");
         final String jwt;
 
-        // check if token is null or not started with Bearer
-        if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+        if (authHeader == null || !authHeader.startsWith("Bearer ")) {
             return;
         }
 
-        // get jwt token
         jwt = authHeader.substring(7);
 
-        // get stored token
-        var storedToken = tokenRepository.findByToken(jwt)
+        final var storedToken = tokenRepository.findByToken(jwt)
                 .orElse(null);
 
-        // check if token is null
         if (storedToken != null) {
-            // revoke token
             storedToken.setExpired(true);
             storedToken.setRevoked(true);
 
-            // save token
             tokenRepository.save(storedToken);
 
-            // clear context
             SecurityContextHolder.clearContext();
         }
     }

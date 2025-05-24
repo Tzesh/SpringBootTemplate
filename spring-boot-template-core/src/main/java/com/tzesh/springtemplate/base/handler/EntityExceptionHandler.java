@@ -3,7 +3,7 @@ package com.tzesh.springtemplate.base.handler;
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
-import com.tzesh.springtemplate.base.exception.SaveFailedException;
+import com.tzesh.springtemplate.base.exception.OperationFailedException;
 import com.tzesh.springtemplate.base.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -19,8 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-import java.time.LocalDateTime;
-import java.util.stream.Collectors;
+import java.util.List;
 
 /**
  * EntityExceptionHandler is a class to handle exceptions
@@ -46,12 +45,7 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler
     public final ResponseEntity<BaseResponse<GenericErrorMessage>> handleBaseException(BaseException e, WebRequest webRequest) {
-
-        String message = e.getErrorMessage().getMessage();
-        String description = webRequest.getDescription(false);
-
-        var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, webRequest.getContextPath());
-
+        final GenericErrorMessage genericErrorMessage = new GenericErrorMessage(e, webRequest);
         log.error("Base exception: {}", genericErrorMessage);
 
         return BaseResponse.error(genericErrorMessage, HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -65,12 +59,7 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler
     public final ResponseEntity<BaseResponse<GenericErrorMessage>> handleNotFoundException(NotFoundException e, WebRequest webRequest) {
-
-        String message = e.getErrorMessage().getMessage();
-        String description = webRequest.getDescription(false);
-
-        var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, webRequest.getContextPath());
-
+        final GenericErrorMessage genericErrorMessage = new GenericErrorMessage(e, webRequest);
         log.error("Not found exception: {}", genericErrorMessage);
 
         return BaseResponse.error(genericErrorMessage, HttpStatus.NOT_FOUND).build();
@@ -83,13 +72,8 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
      * @return ResponseEntity
      */
     @ExceptionHandler
-    public final ResponseEntity<BaseResponse<GenericErrorMessage>> handleSaveFailedException(SaveFailedException e, WebRequest webRequest) {
-
-        String message = e.getErrorMessage().getMessage();
-        String description = webRequest.getDescription(false);
-
-        var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, webRequest.getContextPath());
-
+    public final ResponseEntity<BaseResponse<GenericErrorMessage>> handleSaveFailedException(OperationFailedException e, WebRequest webRequest) {
+        final GenericErrorMessage genericErrorMessage = new GenericErrorMessage(e, webRequest);
         log.error("Save failed exception: {}", genericErrorMessage);
 
         return BaseResponse.error(genericErrorMessage, HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -105,14 +89,11 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
      */
     @Override
     protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
-        var errors = ex.getBindingResult().getFieldErrors().stream()
+        final List<String> errors = ex.getBindingResult().getFieldErrors().stream()
                 .map(fieldError -> fieldError.getField() + ": " + fieldError.getDefaultMessage())
-                .collect(Collectors.toList());
-
-        var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), "Validation Failed", errors.toString(), request.getContextPath());
-
-        var response = BaseResponse.error(genericErrorMessage, HttpStatus.BAD_REQUEST);
-
+                .toList();
+        final GenericErrorMessage genericErrorMessage = new GenericErrorMessage("Validation Failed", errors.toString(), request.getContextPath());
+        final BaseResponse<GenericErrorMessage> response = BaseResponse.error(genericErrorMessage, HttpStatus.BAD_REQUEST);
         log.error("Validation failed: {}", genericErrorMessage);
 
         return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);

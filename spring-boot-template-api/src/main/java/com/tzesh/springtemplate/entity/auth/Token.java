@@ -2,7 +2,6 @@ package com.tzesh.springtemplate.entity.auth;
 
 import com.tzesh.springtemplate.base.entity.BaseEntity;
 import com.tzesh.springtemplate.entity.User;
-import com.tzesh.springtemplate.enums.auth.TokenEnum;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -32,7 +31,7 @@ public class Token extends BaseEntity {
 
     @Column(name = "TYPE", length = 50)
     @Enumerated(EnumType.STRING)
-    public TokenEnum tokenType = TokenEnum.BEARER;
+    public com.tzesh.springtemplate.enumeration.auth.Token tokenType = com.tzesh.springtemplate.enumeration.auth.Token.BEARER;
 
     public boolean revoked;
 

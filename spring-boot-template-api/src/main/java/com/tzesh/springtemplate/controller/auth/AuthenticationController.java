@@ -1,7 +1,7 @@
 package com.tzesh.springtemplate.controller.auth;
 
 import com.tzesh.springtemplate.base.response.BaseResponse;
-import com.tzesh.springtemplate.response.auth.AuthenticationResponse;
+import com.tzesh.springtemplate.response.AuthenticationResponse;
 import com.tzesh.springtemplate.request.auth.AuthorizationRequest;
 import com.tzesh.springtemplate.request.auth.LoginRequest;
 import com.tzesh.springtemplate.request.auth.RegisterRequest;

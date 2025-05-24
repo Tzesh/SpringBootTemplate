@@ -36,72 +36,79 @@ public class JwtService {
 
     /**
      * Get signing key - username
+     *
      * @param token JWT token
      * @return Key
      */
-    public String extractUsername(String token) {
+    public String extractUsername(final String token) {
         return extractClaim(token, Claims::getSubject);
     }
 
     /**
      * Extract claims from token
-     * @param token JWT token
+     *
+     * @param token          JWT token
      * @param claimsResolver Claims resolver
-     * @return T
      * @param <T>
+     * @return T
      */
-    public <T> T extractClaim(String token, Function<Claims, T> claimsResolver) {
+    public <T> T extractClaim(final String token, final Function<Claims, T> claimsResolver) {
         final Claims claims = extractAllClaims(token);
         return claimsResolver.apply(claims);
     }
 
     /**
      * Get signing key
+     *
      * @param userDetails UserDetails
      * @return Key
      */
-    public String generateToken(UserDetails userDetails) {
+    public String generateToken(final UserDetails userDetails) {
         return generateToken(new HashMap<>(), userDetails);
     }
 
     /**
      * Generate JWT token
+     *
      * @param extraClaims extra claims
      * @param userDetails UserDetails
      * @return String
      */
-    public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    public String generateToken(final Map<String, Object> extraClaims, final UserDetails userDetails) {
         return buildToken(extraClaims, userDetails, jwtExpiration);
     }
 
     /**
      * Generate refresh token
+     *
      * @param userDetails UserDetails
      * @return String
      */
-    public String generateRefreshToken(UserDetails userDetails) {
+    public String generateRefreshToken(final UserDetails userDetails) {
         return buildToken(new HashMap<>(), userDetails, refreshExpiration);
     }
 
     /**
      * check if token is valid
-     * @param token JWT token
+     *
+     * @param token       JWT token
      * @param userDetails UserDetails
      * @return boolean
      */
-    public boolean isTokenValid(String token, UserDetails userDetails) {
+    public boolean isTokenValid(final String token, final UserDetails userDetails) {
         final String username = extractUsername(token);
         return (username.equals(userDetails.getUsername())) && !isTokenExpired(token);
     }
 
     /**
      * Build JWT token
+     *
      * @param extraClaims extra claims
      * @param userDetails UserDetails
-     * @param expiration expiration time
+     * @param expiration  expiration time
      * @return
      */
-    private String buildToken(Map<String, Object> extraClaims, UserDetails userDetails, long expiration) {
+    private String buildToken(final Map<String, Object> extraClaims, final UserDetails userDetails, final long expiration) {
         return Jwts
                 .builder()
                 .setClaims(extraClaims)
@@ -115,28 +122,31 @@ public class JwtService {
 
     /**
      * Check if token is expired
+     *
      * @param token JWT token
      * @return boolean
      */
-    private boolean isTokenExpired(String token) {
+    private boolean isTokenExpired(final String token) {
         return extractExpiration(token).before(new Date());
     }
 
     /**
      * Extract expiration date from token
+     *
      * @param token JWT token
      * @return Date
      */
-    private Date extractExpiration(String token) {
+    private Date extractExpiration(final String token) {
         return extractClaim(token, Claims::getExpiration);
     }
 
     /**
      * Extract all claims from token
+     *
      * @param token JWT token
      * @return Claims
      */
-    private Claims extractAllClaims(String token) {
+    private Claims extractAllClaims(final String token) {
         return Jwts
                 .parserBuilder()
                 .setSigningKey(getSignInKey())
@@ -147,6 +157,7 @@ public class JwtService {
 
     /**
      * Get signing key from secret key
+     *
      * @return Key
      */
     private Key getSignInKey() {

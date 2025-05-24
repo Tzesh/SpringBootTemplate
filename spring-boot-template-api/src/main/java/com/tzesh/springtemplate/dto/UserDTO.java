@@ -1,7 +1,7 @@
 package com.tzesh.springtemplate.dto;
 
 import com.tzesh.springtemplate.base.dto.BaseDTO;
-import com.tzesh.springtemplate.enums.auth.RoleEnum;
+import com.tzesh.springtemplate.enumeration.auth.Role;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;
@@ -30,5 +30,5 @@ public class UserDTO extends BaseDTO {
     private String name;
 
     @NotNull
-    private RoleEnum role;
+    private Role role;
 }

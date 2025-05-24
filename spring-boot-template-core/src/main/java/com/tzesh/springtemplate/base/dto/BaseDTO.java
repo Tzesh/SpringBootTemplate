@@ -32,7 +32,7 @@ public abstract class BaseDTO implements DTO {
      * Set id of the DTO
      * @param id id of the DTO
      */
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 }

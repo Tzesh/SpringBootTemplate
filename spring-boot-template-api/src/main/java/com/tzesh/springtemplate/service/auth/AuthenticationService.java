@@ -4,16 +4,15 @@ import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
-import com.tzesh.springtemplate.entity.auth.Token;
 import com.tzesh.springtemplate.entity.User;
-import com.tzesh.springtemplate.enums.auth.RoleEnum;
-import com.tzesh.springtemplate.enums.auth.TokenEnum;
+import com.tzesh.springtemplate.enumeration.auth.Role;
+import com.tzesh.springtemplate.enumeration.auth.Token;
 import com.tzesh.springtemplate.repository.auth.TokenRepository;
-import com.tzesh.springtemplate.repository.UserRepository;
+import com.tzesh.springtemplate.repository.user.UserRepository;
 import com.tzesh.springtemplate.request.auth.AuthorizationRequest;
 import com.tzesh.springtemplate.request.auth.LoginRequest;
 import com.tzesh.springtemplate.request.auth.RegisterRequest;
-import com.tzesh.springtemplate.response.auth.AuthenticationResponse;
+import com.tzesh.springtemplate.response.AuthenticationResponse;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -24,7 +23,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -58,50 +56,33 @@ public class AuthenticationService {
      * @throws RuntimeException if username or email already exists
      * @see RegisterRequest
      */
-    public AuthenticationResponse register(RegisterRequest request) {
-        // check if username or email already exists
+    public AuthenticationResponse register(final RegisterRequest request) {
         if (repository.existsByUsernameOrEmail(request.username(), request.email())) {
             throw new BaseException(
                     GenericErrorMessage.builder()
                             .message("Username or email already exists")
                             .build()
-                    );
+            );
         }
 
-        // create user
-        User user = User.builder()
+        final User user = User.builder()
                 .username(request.username())
                 .email(request.email())
                 .name(request.name())
                 .password(passwordEncoder.encode(request.password()))
-                .role(RoleEnum.USER)
+                .role(Role.USER)
                 .build();
-
-        // create auditable fields
-        BaseAuditableFields auditableFields = new BaseAuditableFields();
-
-        // set created by
+        final BaseAuditableFields auditableFields = new BaseAuditableFields();
         auditableFields.setCreatedBy(user.getUsername());
-
-        // set created date
         auditableFields.setCreatedDate(LocalDateTime.now());
-
-        // set base auditable fields
         user.setAuditableFields(auditableFields);
 
-        // save user
-        User savedUser = repository.save(user);
+        final User savedUser = repository.save(user);
+        final String jwtToken = jwtService.generateToken(user);
+        final String refreshToken = jwtService.generateRefreshToken(user);
 
-        // generate jwt token
-        String jwtToken = jwtService.generateToken(user);
-
-        // generate refresh token
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        // save refresh token
         saveUserToken(savedUser, jwtToken);
 
-        // return response
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -115,7 +96,7 @@ public class AuthenticationService {
      * @return AuthenticationResponse
      * @see LoginRequest
      */
-    public AuthenticationResponse login(LoginRequest request) {
+    public AuthenticationResponse login(final LoginRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.username(),
@@ -123,7 +104,7 @@ public class AuthenticationService {
                 )
         );
 
-        User user = repository.findByUsername(request.username())
+        final User user = repository.findByUsername(request.username())
                 .orElseThrow(
                         () -> new NotFoundException(
                                 GenericErrorMessage.builder()
@@ -132,12 +113,10 @@ public class AuthenticationService {
                         )
                 );
 
-        String jwtToken = jwtService.generateToken(user);
-        String refreshToken = jwtService.generateRefreshToken(user);
-
+        final String jwtToken = jwtService.generateToken(user);
+        final String refreshToken = jwtService.generateRefreshToken(user);
         revokeAllUserTokens(user);
         saveUserToken(user, jwtToken);
-
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)
@@ -150,15 +129,14 @@ public class AuthenticationService {
      * @param user     User
      * @param jwtToken JWT token
      */
-    private void saveUserToken(User user, String jwtToken) {
-        Token token = Token.builder()
+    private void saveUserToken(final User user, final String jwtToken) {
+        final com.tzesh.springtemplate.entity.auth.Token token = com.tzesh.springtemplate.entity.auth.Token.builder()
                 .user(user)
                 .token(jwtToken)
-                .tokenType(TokenEnum.BEARER)
+                .tokenType(Token.BEARER)
                 .expired(false)
                 .revoked(false)
                 .build();
-
         tokenRepository.save(token);
     }
 
@@ -167,21 +145,14 @@ public class AuthenticationService {
      *
      * @param user User
      */
-    private void revokeAllUserTokens(User user) {
-        // get all valid user tokens
-        List<Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-
-        // check if valid user tokens is empty
+    private void revokeAllUserTokens(final User user) {
+        final List<com.tzesh.springtemplate.entity.auth.Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
         if (validUserTokens.isEmpty())
             return;
-
-        // revoke all valid user tokens
         validUserTokens.forEach(token -> {
             token.setExpired(true);
             token.setRevoked(true);
         });
-
-        // save all valid user tokens
         tokenRepository.saveAll(validUserTokens);
     }
 
@@ -190,30 +161,18 @@ public class AuthenticationService {
      *
      * @param request  HTTP request
      * @param response HTTP response
-     * @throws IOException IOException
      */
-    public AuthenticationResponse refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        // get authorization header
+    public AuthenticationResponse refreshToken(final HttpServletRequest request, final HttpServletResponse response) {
         final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
-
-        // get refresh token and username
         final String refreshToken;
         final String username;
-
-        // check if authorization header is null or not bearer
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
-            // return if authorization header is null or not bearer
             return null;
         }
-
-        // get refresh token and username
         refreshToken = authHeader.substring(7);
         username = jwtService.extractUsername(refreshToken);
-
-        // check if username is null
         if (username != null) {
-            // get user
-            User user = this.repository.findByUsername(username)
+            final User user = this.repository.findByUsername(username)
                     .orElseThrow(
                             () -> new NotFoundException(
                                     GenericErrorMessage.builder()
@@ -221,27 +180,16 @@ public class AuthenticationService {
                                             .build()
                             )
                     );
-
-            // check if refresh token is valid
             if (jwtService.isTokenValid(refreshToken, user)) {
-                // generate new access token
-                String accessToken = jwtService.generateToken(user);
-
-                // revoke all user tokens
+                final String accessToken = jwtService.generateToken(user);
                 revokeAllUserTokens(user);
-
-                // save new refresh token
                 saveUserToken(user, accessToken);
-
-                // return response
                 return AuthenticationResponse.builder()
                         .accessToken(accessToken)
                         .refreshToken(refreshToken)
                         .build();
             }
         }
-
-        // return null if username is null
         return null;
     }
 
@@ -253,14 +201,12 @@ public class AuthenticationService {
      * @see AuthorizationRequest
      * @see AuthenticationResponse
      */
-    public AuthenticationResponse authorize(AuthorizationRequest request) {
-        // check if given secret is correct
+    public AuthenticationResponse authorize(final AuthorizationRequest request) {
         if (!request.secret().equals(authorizationKey)) {
             throw new RuntimeException("Secret is not correct");
         }
 
-        // get user
-        User user = repository.findByUsername(request.username())
+        final User user = repository.findByUsername(request.username())
                 .orElseThrow(
                         () -> new NotFoundException(
                                 GenericErrorMessage.builder()
@@ -268,32 +214,16 @@ public class AuthenticationService {
                                         .build()
                         )
                 );
-
-        // set role of user
         user.setRole(request.role());
 
-        // get auditable fields
-        BaseAuditableFields auditableFields = user.getAuditableFields();
-
-        // set updated by
+        final BaseAuditableFields auditableFields = user.getAuditableFields();
         auditableFields.setUpdatedBy("SYSTEM");
-
-        // set updated date
         auditableFields.setUpdatedDate(LocalDateTime.now());
 
-        // save user
-        user = repository.save(user);
-
-        // generate jwt token
-        String jwtToken = jwtService.generateToken(user);
-
-        // generate refresh token
-        String refreshToken = jwtService.generateRefreshToken(user);
-
-        // save refresh token
-        saveUserToken(user, jwtToken);
-
-        // return response
+        final User updatedUser = repository.save(user);
+        final String jwtToken = jwtService.generateToken(updatedUser);
+        final String refreshToken = jwtService.generateRefreshToken(updatedUser);
+        saveUserToken(updatedUser, jwtToken);
         return AuthenticationResponse.builder()
                 .accessToken(jwtToken)
                 .refreshToken(refreshToken)

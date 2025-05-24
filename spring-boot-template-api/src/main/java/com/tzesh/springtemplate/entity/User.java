@@ -1,7 +1,7 @@
 package com.tzesh.springtemplate.entity;
 
 import com.tzesh.springtemplate.entity.auth.Token;
-import com.tzesh.springtemplate.enums.auth.RoleEnum;
+import com.tzesh.springtemplate.enumeration.auth.Role;
 import com.tzesh.springtemplate.base.entity.BaseEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -40,7 +40,7 @@ public class User extends BaseEntity implements UserDetails {
 
     @Column(name = "TYPE", length = 50)
     @Enumerated(EnumType.STRING)
-    private RoleEnum role;
+    private Role role;
 
     @OneToMany(mappedBy = "user")
     private List<Token> tokens;

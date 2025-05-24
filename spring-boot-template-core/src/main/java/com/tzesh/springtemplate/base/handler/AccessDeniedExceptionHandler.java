@@ -36,12 +36,10 @@ public class AccessDeniedExceptionHandler extends ResponseEntityExceptionHandler
      * @return ResponseEntity
      */
     @ExceptionHandler({AccessDeniedException.class})
-    public ResponseEntity<BaseResponse<GenericErrorMessage>> handleAccessDeniedException(AccessDeniedException ex, WebRequest request) {
-        String message = ex.getMessage();
-        String description = request.getDescription(false);
-
-        var genericErrorMessage = new GenericErrorMessage(LocalDateTime.now(), message, description, request.getContextPath());
-
+    public ResponseEntity<BaseResponse<GenericErrorMessage>> handleAccessDeniedException(final AccessDeniedException ex, final WebRequest request) {
+        final String message = ex.getMessage();
+        final String description = request.getDescription(false);
+        final GenericErrorMessage genericErrorMessage = new GenericErrorMessage(message, description, request.getContextPath());
         log.error("Access denied exception: {}", genericErrorMessage);
 
         return BaseResponse.error(genericErrorMessage, HttpStatus.FORBIDDEN).build();

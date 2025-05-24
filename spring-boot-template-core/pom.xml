@@ -5,23 +5,23 @@
     <parent>
         <groupId>com.tzesh</groupId>
         <artifactId>spring-boot-template</artifactId>
-        <version>1.0</version>
+        <version>2.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
     <artifactId>spring-boot-template-core</artifactId>
-    <version>1.0</version>
+    <version>2.0</version>
     <name>spring-template-core</name>
     <description>spring-boot-template-core</description>
     <packaging>jar</packaging>
 
-    <properties>
-        <java.version>20</java.version>
-        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <org.projectlombok.version>1.18.20</org.projectlombok.version>
-    </properties>
-
     <build>
+        <resources>
+            <resource>
+                <directory>src/main/resources</directory>
+                <filtering>true</filtering>
+            </resource>
+        </resources>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>

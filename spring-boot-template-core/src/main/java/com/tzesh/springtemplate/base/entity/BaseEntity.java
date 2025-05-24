@@ -4,7 +4,6 @@ package com.tzesh.springtemplate.base.entity;
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +23,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @MappedSuperclass
-@Table
 public abstract class BaseEntity implements Serializable, Cloneable, Entity {
     @Serial
     private static final long serialVersionUID = 1L;
@@ -35,10 +33,10 @@ public abstract class BaseEntity implements Serializable, Cloneable, Entity {
     @Override
     public BaseEntity clone() {
         try {
-            BaseEntity clone = (BaseEntity) super.clone();
+            final BaseEntity clone = (BaseEntity) super.clone();
             // TODO: copy mutable state here, so the clone can't change the internals of the original
             return clone;
-        } catch (CloneNotSupportedException e) {
+        } catch (final CloneNotSupportedException e) {
             throw new AssertionError();
         }
     }

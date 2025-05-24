@@ -6,7 +6,6 @@ import com.tzesh.springtemplate.dto.UserDTO;
 import com.tzesh.springtemplate.entity.User;
 import org.mapstruct.Mapper;
 
-
 /**
  * Mapper for {@link User}
  * @see BaseMapper
