@@ -4,7 +4,6 @@ package com.tzesh.springtemplate.base.entity;
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
 import jakarta.persistence.Embedded;
 import jakarta.persistence.MappedSuperclass;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -24,7 +23,6 @@ import java.io.Serializable;
 @Getter
 @Setter
 @MappedSuperclass
-@Table
 public abstract class BaseEntity implements Serializable, Cloneable, Entity {
     @Serial
     private static final long serialVersionUID = 1L;

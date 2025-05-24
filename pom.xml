@@ -5,8 +5,8 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.0.6</version>
-        <relativePath/> <!-- lookup parent from repository -->
+        <version>3.2.3</version>
+        <relativePath/>
     </parent>
 
     <groupId>com.tzesh</groupId>
@@ -16,9 +16,9 @@
     <description>spring-boot-template</description>
 
     <properties>
-        <java.version>20</java.version>
+        <java.version>21</java.version>
         <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <org.projectlombok.version>1.18.20</org.projectlombok.version>
+        <org.projectlombok.version>1.18.32</org.projectlombok.version>
     </properties>
 
     <dependencies>
@@ -132,7 +132,7 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <optional>true</optional>
+            <version>${org.projectlombok.version}</version>
         </dependency>
 
         <!-- Test -->
@@ -200,10 +200,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.8.1</version>
+                <version>3.11.0</version>
                 <configuration>
-                    <source>16</source>
-                    <target>16</target>
+                    <source>21</source>
+                    <target>21</target>
                     <annotationProcessorPaths>
                         <!-- Please note that order of project lombok and mapstruct is important -->
 
@@ -227,8 +227,8 @@
     </build>
 
     <modules>
+        <module>spring-boot-template-core</module>
         <module>spring-boot-template-api</module>
-        <module>spring-boot-template-mvc</module>
     </modules>
 
     <packaging>pom</packaging>

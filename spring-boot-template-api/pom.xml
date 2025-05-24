@@ -23,12 +23,6 @@
 	</dependencies>
 	<packaging>jar</packaging>
 
-	<properties>
-		<java.version>20</java.version>
-		<org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-		<org.projectlombok.version>1.18.20</org.projectlombok.version>
-	</properties>
-
 	<build>
 		<plugins>
 			<plugin>
