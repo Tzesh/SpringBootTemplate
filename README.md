@@ -51,6 +51,7 @@ A template for Spring Boot projects. This template includes the following featur
 7. Now you can test the API endpoints
 8. To test the refresh token endpoint, click the `Authorize` button again and paste the refresh token in the `Value` field without the `Bearer` prefix
 
+![Docker Compose](https://imgur.com/qWLYDrg.png)
 ![Maven Run](https://imgur.com/lGSrRLL.png)
 ![Swagger UI](https://imgur.com/7Vug2XR.png)
 
