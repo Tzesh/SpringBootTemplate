@@ -21,9 +21,9 @@ import io.swagger.v3.oas.annotations.servers.Server;
                         email = "mail@ugurdindar.com",
                         url = "https://ugurdindar.com"
                 ),
-                description = "Spring Boot Template for RESTful API that uses JWT for authentication and authorization, PostgreSQL for database, Hibernate for ORM, and Lombok for boilerplate code generation and MapStruct for mapping DTOs to entities and vice versa.",
+                description = "Production-ready Spring Boot template for secure REST APIs with JWT, PostgreSQL, Hibernate, Redis, Kafka, Zookeeper, MapStruct, Lombok, and Docker Compose. Fast, modern, and cloud-ready.",
                 title = "Spring Boot Template",
-                version = "0.3.0",
+                version = "2.1.0",
                 license = @License(
                         name = "GitHub Repository",
                         url = "https://github.com/tzesh/SpringBootTemplate"

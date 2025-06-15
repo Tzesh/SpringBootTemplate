@@ -29,7 +29,7 @@ import java.io.IOException;
 @RequestMapping("/auth")
 @RequiredArgsConstructor
 @Validated
-@Tag(name = "1. Authentication Controller", description = "Authentication operations for users")
+@Tag(name = "Authentication Controller", description = "Authentication operations for users")
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
