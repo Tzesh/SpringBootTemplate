@@ -25,7 +25,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("/users")
-@Tag(name = "2. User Controller", description = "User operations")
+@Tag(name = "User Controller", description = "User operations")
 @RequiredArgsConstructor
 @Validated
 public class UserController {
