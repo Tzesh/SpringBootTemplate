@@ -4,7 +4,7 @@
 A robust template for Spring Boot projects with modern best practices and production-ready integrations.
 
 ![Docker Compose](https://imgur.com/qWLYDrg.png)
-![Swagger UI](https://imgur.com/7Vug2XR.png)
+![Swagger UI](https://imgur.com/5MixfZe.png)
 
 ### Key Features
 - **Spring Boot 3.2.3** (Java 21 LTS)
