@@ -1,4 +1,4 @@
-package com.tzesh.springtemplate.util;
+package com.tzesh.springtemplate.base.util;
 
 public class StringUtils {
     public static boolean isNullOrEmpty(String str) {

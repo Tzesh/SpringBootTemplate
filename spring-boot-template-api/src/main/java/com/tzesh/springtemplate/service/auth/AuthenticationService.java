@@ -5,6 +5,7 @@ import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.entity.User;
+import com.tzesh.springtemplate.entity.auth.TokenEntity;
 import com.tzesh.springtemplate.enumeration.auth.Role;
 import com.tzesh.springtemplate.enumeration.auth.Token;
 import com.tzesh.springtemplate.repository.auth.TokenRepository;
@@ -130,14 +131,13 @@ public class AuthenticationService {
      * @param jwtToken JWT token
      */
     private void saveUserToken(final User user, final String jwtToken) {
-        final com.tzesh.springtemplate.entity.auth.Token token = com.tzesh.springtemplate.entity.auth.Token.builder()
+        final TokenEntity tokenEntity = TokenEntity.builder()
                 .user(user)
                 .token(jwtToken)
-                .tokenType(Token.BEARER)
                 .expired(false)
                 .revoked(false)
                 .build();
-        tokenRepository.save(token);
+        tokenRepository.save(tokenEntity);
     }
 
     /**
@@ -146,14 +146,14 @@ public class AuthenticationService {
      * @param user User
      */
     private void revokeAllUserTokens(final User user) {
-        final List<com.tzesh.springtemplate.entity.auth.Token> validUserTokens = tokenRepository.findAllValidTokenByUser(user.getId());
-        if (validUserTokens.isEmpty())
+        final List<TokenEntity> validUserTokenEntities = tokenRepository.findAllValidTokenByUser(user.getId());
+        if (validUserTokenEntities.isEmpty())
             return;
-        validUserTokens.forEach(token -> {
-            token.setExpired(true);
-            token.setRevoked(true);
+        validUserTokenEntities.forEach(tokenEntity -> {
+            tokenEntity.setExpired(true);
+            tokenEntity.setRevoked(true);
         });
-        tokenRepository.saveAll(validUserTokens);
+        tokenRepository.saveAll(validUserTokenEntities);
     }
 
     /**

@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * User Controller class for handling user requests
@@ -70,7 +71,7 @@ public class UserController {
     @GetMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get a user (ADMIN)", description = "Get a user with the given id and return the user")
-    public ResponseEntity<BaseResponse<UserDTO>> getUser(@PathVariable @NotNull Long id) {
+    public ResponseEntity<BaseResponse<UserDTO>> getUser(@PathVariable @NotNull UUID id) {
         // call the get method in the user service
         UserDTO userDTO = userService.findById(id);
 
@@ -86,7 +87,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Delete a user (ADMIN)", description = "Delete a user with the given id and return the user")
-    public ResponseEntity<BaseResponse<UserDTO>> deleteUser(@PathVariable @NotNull Long id) {
+    public ResponseEntity<BaseResponse<UserDTO>> deleteUser(@PathVariable @NotNull UUID id) {
         // call the delete method in the user service
         UserDTO userDTO = userService.deleteById(id);
 
@@ -103,7 +104,7 @@ public class UserController {
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Update a user (ADMIN)", description = "Update a user with the given details and return the user")
-    public ResponseEntity<BaseResponse<UserDTO>> updateUser(@PathVariable @NotNull Long id, @RequestBody @Valid UpdateUserRequest request) {
+    public ResponseEntity<BaseResponse<UserDTO>> updateUser(@PathVariable @NotNull UUID id, @RequestBody @Valid UpdateUserRequest request) {
         // call the update method in the user service
         UserDTO userDTO = userService.updateUser(id, request);
 

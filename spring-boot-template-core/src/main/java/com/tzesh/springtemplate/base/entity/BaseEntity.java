@@ -1,14 +1,18 @@
 package com.tzesh.springtemplate.base.entity;
 
-
+import com.tzesh.springtemplate.base.annotation.ExcludeFromCodeCoverage;
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
 import jakarta.persistence.Embedded;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.Id;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.UuidGenerator;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.util.UUID;
 
 /**
  * Base entity class for all entities
@@ -20,12 +24,18 @@ import java.io.Serializable;
  * @see BaseAuditableFields
  * @author tzesh
  */
+@ExcludeFromCodeCoverage
 @Getter
 @Setter
 @MappedSuperclass
 public abstract class BaseEntity implements Serializable, Cloneable, Entity {
     @Serial
     private static final long serialVersionUID = 1L;
+
+    @Id
+    @GeneratedValue
+    @UuidGenerator
+    private UUID id;
 
     @Embedded
     private BaseAuditableFields auditableFields;

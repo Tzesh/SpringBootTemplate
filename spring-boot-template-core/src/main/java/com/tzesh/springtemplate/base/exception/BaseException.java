@@ -3,6 +3,7 @@ package com.tzesh.springtemplate.base.exception;
 import com.tzesh.springtemplate.base.error.BaseErrorMessage;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @RequiredArgsConstructor
 @MappedSuperclass
 @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+@EqualsAndHashCode(callSuper=true)
 public class BaseException extends RuntimeException {
     protected final BaseErrorMessage errorMessage;
 }

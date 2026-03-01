@@ -1,5 +1,6 @@
 package com.tzesh.springtemplate.util;
 
+import com.tzesh.springtemplate.base.util.StringUtils;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 

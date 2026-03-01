@@ -20,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 /**
  * Service for {@link User} objects.
@@ -52,7 +53,7 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
                         ).build()
                 )
         );
-        final Long id = user.getId();
+        final UUID id = user.getId();
         return this.updateUser(id, request);
     }
 
@@ -88,7 +89,7 @@ public class UserService extends BaseService<User, UserDTO, UserRepository, User
         return mapper.toDTO(this.trySave(user));
     }
 
-    public UserDTO updateUser(final Long id, final UpdateUserRequest request) {
+    public UserDTO updateUser(final UUID id, final UpdateUserRequest request) {
         final User user = repository.findById(id).orElseThrow(
                 () -> new NotFoundException(
                         GenericErrorMessage.builder().message(
