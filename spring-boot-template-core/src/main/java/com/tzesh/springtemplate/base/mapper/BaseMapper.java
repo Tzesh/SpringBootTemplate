@@ -1,11 +1,10 @@
 package com.tzesh.springtemplate.base.mapper;
 
+import java.util.List;
+
 import com.tzesh.springtemplate.base.dto.BaseDTO;
 import com.tzesh.springtemplate.base.dto.DTO;
 import com.tzesh.springtemplate.base.entity.BaseEntity;
-import jakarta.persistence.MappedSuperclass;
-
-import java.util.List;
 
 /**
  * Interface for mappers
@@ -15,7 +14,7 @@ import java.util.List;
  *           @see DTO
  * @author tzesh
  */
-@MappedSuperclass
+
 public interface BaseMapper<E extends BaseEntity, D extends BaseDTO> {
     /**
      * Converts the DTO to entity

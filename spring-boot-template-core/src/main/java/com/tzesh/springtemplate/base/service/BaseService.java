@@ -1,5 +1,13 @@
 package com.tzesh.springtemplate.base.service;
 
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.UUID;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetailsService;
+
 import com.tzesh.springtemplate.base.dto.BaseDTO;
 import com.tzesh.springtemplate.base.entity.BaseEntity;
 import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
@@ -7,18 +15,12 @@ import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.base.exception.OperationFailedException;
 import com.tzesh.springtemplate.base.mapper.BaseMapper;
-import jakarta.persistence.MappedSuperclass;
+
 import lombok.Getter;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetailsService;
 
-import java.time.LocalDateTime;
-import java.util.List;
 
-@MappedSuperclass
 @Getter
-public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R extends JpaRepository<E, Long>, M extends BaseMapper<E, D>> {
+public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R extends JpaRepository<E, UUID>, M extends BaseMapper<E, D>> {
     protected final R repository;
     protected final M mapper;
     protected final UserDetailsService userDetailsService;
@@ -32,7 +34,7 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
 
     protected abstract M initializeMapper();
 
-    public D findById(final Long id) {
+    public D findById(final UUID id) {
         final E entity = repository.findById(id).orElseThrow(() -> notFound(id));
         return mapper.toDTO(entity);
     }
@@ -48,7 +50,7 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
         return mapper.toDTO(trySave(entity));
     }
 
-    public D deleteById(final Long id) {
+    public D deleteById(final UUID id) {
         final E entity = repository.findById(id).orElseThrow(() -> notFound(id));
         repository.deleteById(id);
         return mapper.toDTO(entity);
@@ -71,9 +73,9 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
         }
     }
 
-    private NotFoundException notFound(Long id) {
+    private NotFoundException notFound(UUID id) {
         return new NotFoundException(GenericErrorMessage.builder()
-                .message(String.format("%s with id %d not found", subject, id))
+                .message(String.format("%s with id %s not found", subject, id))
                 .build());
     }
 

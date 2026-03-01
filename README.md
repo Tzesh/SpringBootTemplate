@@ -7,7 +7,8 @@ A robust template for Spring Boot projects with modern best practices and produc
 ![Swagger UI](https://imgur.com/5MixfZe.png)
 
 ### Key Features
-- **Spring Boot 3.2.3** (Java 21 LTS)
+- **Spring Boot 4.0.0** (Java 25)
+- **UUID Primary Keys** — All entities use `UUID` identifiers via Hibernate's `@UuidGenerator`, providing globally unique, non-sequential IDs with native PostgreSQL UUID column support
 - **JWT Authentication & Authorization** (with refresh tokens)
 - **Swagger UI** for API documentation and testing ([http://localhost:8080/api/v1/swagger-ui/index.html](http://localhost:8080/api/v1/swagger-ui/index.html))
 - **PostgreSQL** integration (via Docker Compose)
@@ -21,7 +22,7 @@ A robust template for Spring Boot projects with modern best practices and produc
 - **Configurable Logging** (including Kafka)
 - **Unit & Integration Tests** for key services and controllers
 
-> **Note:** Java 21 is required. Ensure your local environment supports Java 21 for development and builds.
+> **Note:** Java 25 is required. Ensure your local environment supports Java 25 for development and builds.
 
 ---
 
@@ -75,8 +76,8 @@ A robust template for Spring Boot projects with modern best practices and produc
 
 ## API Usage
 1. Register a new user
-2. Login and obtain a JWT token
-3. Use the token in Swagger UI via the `Authorize` button
+2. Login and obtain a JWT tokenEntity
+3. Use the tokenEntity in Swagger UI via the `Authorize` button
 4. Access secured endpoints (e.g., Kafka messaging requires ADMIN role)
 
 ---
@@ -89,7 +90,6 @@ A robust template for Spring Boot projects with modern best practices and produc
 - Environment isolation for dev, test, and prod
 - Configurable logging
 - Unit and integration tests
-
 ---
 
 For more details, see the code and comments, or open an issue for questions!

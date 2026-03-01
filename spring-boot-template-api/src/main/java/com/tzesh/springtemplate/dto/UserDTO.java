@@ -7,6 +7,8 @@ import jakarta.validation.constraints.NotNull;
 import lombok.*;
 import org.hibernate.validator.constraints.Length;
 
+import java.util.UUID;
+
 /**
  * @author tzesh
  */
@@ -14,8 +16,9 @@ import org.hibernate.validator.constraints.Length;
 @NoArgsConstructor
 @Data
 @Builder
+@EqualsAndHashCode(callSuper = true)
 public class UserDTO extends BaseDTO {
-    private Long id;
+    private UUID id;
 
     @NotNull
     @Length(min = 3, max = 50)

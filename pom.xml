@@ -5,20 +5,20 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.3</version>
+        <version>4.0.0</version>
         <relativePath/>
     </parent>
 
     <groupId>com.tzesh</groupId>
     <artifactId>spring-boot-template</artifactId>
-    <version>2.1</version>
+    <version>2.2-SNAPSHOT</version>
     <name>spring-boot-template</name>
     <description>spring-boot-template</description>
 
     <properties>
-        <java.version>21</java.version>
-        <org.mapstruct.version>1.5.5.Final</org.mapstruct.version>
-        <org.projectlombok.version>1.18.32</org.projectlombok.version>
+        <java.version>25</java.version>
+        <org.mapstruct.version>1.6.3</org.mapstruct.version>
+        <org.projectlombok.version>1.18.42</org.projectlombok.version>
     </properties>
 
     <dependencies>
@@ -38,19 +38,19 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
         </dependency>
 
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
         </dependency>
 
         <!-- Spring Security -->
@@ -103,7 +103,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.1.0</version>
+            <version>3.0.2</version>
         </dependency>
 
         <!-- DevTools -->
@@ -142,11 +142,10 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Security Test -->
+        <!-- Byte Buddy (required by Hibernate 7.x for bytecode enhancement) -->
         <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <scope>test</scope>
+            <groupId>net.bytebuddy</groupId>
+            <artifactId>byte-buddy</artifactId>
         </dependency>
 
         <!-- Mapstruct -->
@@ -200,10 +199,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.11.0</version>
+                <version>3.14.0</version>
                 <configuration>
-                    <source>21</source>
-                    <target>21</target>
+                    <release>25</release>
+                    <compilerId>javac</compilerId>
                     <annotationProcessorPaths>
                         <!-- Please note that order of project lombok and mapstruct is important -->
 
@@ -213,6 +212,8 @@
                             <artifactId>lombok</artifactId>
                             <version>${org.projectlombok.version}</version>
                         </path>
+
+
 
                         <!-- Mapstruct -->
                         <path>
@@ -234,4 +235,3 @@
     <packaging>pom</packaging>
 
 </project>
-

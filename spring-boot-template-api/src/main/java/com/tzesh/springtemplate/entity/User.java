@@ -1,6 +1,6 @@
 package com.tzesh.springtemplate.entity;
 
-import com.tzesh.springtemplate.entity.auth.Token;
+import com.tzesh.springtemplate.entity.auth.TokenEntity;
 import com.tzesh.springtemplate.enumeration.auth.Role;
 import com.tzesh.springtemplate.base.entity.BaseEntity;
 import jakarta.persistence.*;
@@ -20,12 +20,8 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "_USER")
+@EqualsAndHashCode(callSuper = true)
 public class User extends BaseEntity implements UserDetails {
-    @Id
-    @GeneratedValue(generator = "USER_ID_GEN", strategy = GenerationType.SEQUENCE)
-    @SequenceGenerator(name = "USER_ID_GEN", sequenceName = "USER_ID_SEQ", allocationSize = 50)
-    private Long id;
-
     @Column(name = "USERNAME", length = 50, nullable = false, unique = true)
     private String username;
 
@@ -43,7 +39,7 @@ public class User extends BaseEntity implements UserDetails {
     private Role role;
 
     @OneToMany(mappedBy = "user")
-    private List<Token> tokens;
+    private List<TokenEntity> tokenEntities;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
