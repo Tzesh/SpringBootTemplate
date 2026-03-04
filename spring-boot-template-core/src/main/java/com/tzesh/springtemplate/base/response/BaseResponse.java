@@ -104,6 +104,26 @@ public class BaseResponse<T> implements Serializable {
     }
 
     /**
+     * Response for rate limit exceeded (429)
+     * @param data data to be stored
+     * @return BaseResponse<T>
+     * @param <T> data type
+     */
+    public static <T> BaseResponse<T> tooManyRequests(T data) {
+        return new BaseResponse<>(data, HttpStatus.TOO_MANY_REQUESTS, false);
+    }
+
+    /**
+     * Response for conflict (409)
+     * @param data data to be stored
+     * @return BaseResponse<T>
+     * @param <T> data type
+     */
+    public static <T> BaseResponse<T> conflict(T data) {
+        return new BaseResponse<>(data, HttpStatus.CONFLICT, false);
+    }
+
+    /**
      * Response with data and error status
      * @param data message to be stored
      * @return BaseResponse<T>

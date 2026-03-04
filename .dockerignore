@@ -1,0 +1,13 @@
+.git/
+**/target/
+*.md
+.env*
+.DS_Store
+.idea/
+.vscode/
+*.iml
+**/logs/
+.claude/
+init-project.sh
+CONTRIBUTING.md
+LICENSE

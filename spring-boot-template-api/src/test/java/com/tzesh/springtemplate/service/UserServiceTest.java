@@ -21,6 +21,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import org.mockito.MockitoAnnotations;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import com.tzesh.springtemplate.dto.UserDTO;
@@ -100,5 +104,17 @@ class UserServiceTest {
         });
         List<UserDTO> result = userService.findAll();
         assertEquals(2, result.size());
+    }
+
+    @Test
+    void testFindAllUsersPaginated() {
+        List<User> users = Arrays.asList(new User(), new User());
+        Pageable pageable = PageRequest.of(0, 20);
+        Page<User> userPage = new PageImpl<>(users, pageable, users.size());
+        when(userRepository.findAll(pageable)).thenReturn(userPage);
+        when(userMapper.toDTO(any(User.class))).thenReturn(new UserDTO());
+        Page<UserDTO> result = userService.findAll(pageable);
+        assertEquals(2, result.getTotalElements());
+        assertEquals(2, result.getContent().size());
     }
 }
