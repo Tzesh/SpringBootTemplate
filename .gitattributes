@@ -1,0 +1,26 @@
+# Auto detect text files and normalize line endings
+* text=auto
+
+# Java sources
+*.java text diff=java
+*.xml text
+*.properties text
+*.md text diff=markdown
+
+# Shell scripts must use LF
+*.sh text eol=lf
+mvnw text eol=lf
+
+# Windows scripts must use CRLF
+*.cmd text eol=crlf
+mvnw.cmd text eol=crlf
+
+# Binary files
+*.jar binary
+*.class binary
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.ico binary
+*.svg binary

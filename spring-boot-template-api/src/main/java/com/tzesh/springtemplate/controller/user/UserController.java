@@ -5,18 +5,25 @@ import com.tzesh.springtemplate.dto.UserDTO;
 import com.tzesh.springtemplate.request.user.CreateUserRequest;
 import com.tzesh.springtemplate.request.user.UpdateUserRequest;
 import com.tzesh.springtemplate.service.UserService;
+import com.tzesh.springtemplate.base.annotation.Idempotent;
+import com.tzesh.springtemplate.base.annotation.RateLimit;
+import com.tzesh.springtemplate.base.annotation.RateLimitCategory;
+import com.tzesh.springtemplate.base.annotation.RateLimitCategoryType;
+import com.tzesh.springtemplate.base.annotation.RateLimitKeyStrategy;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 import java.util.UUID;
 
 /**
@@ -29,6 +36,7 @@ import java.util.UUID;
 @Tag(name = "User Controller", description = "User operations")
 @RequiredArgsConstructor
 @Validated
+@RateLimitCategory(RateLimitCategoryType.STANDARD)
 public class UserController {
     private final UserService userService;
 
@@ -40,6 +48,8 @@ public class UserController {
     @PostMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Create a new user (ADMIN)", description = "Create a new user with the given details and return the user")
+    @RateLimit(limit = 20, duration = 1, key = RateLimitKeyStrategy.USER)
+    @Idempotent
     public ResponseEntity<BaseResponse<UserDTO>> createUser(@RequestBody @Valid CreateUserRequest request) {
         // call the create method in the user service
         UserDTO userDTO = userService.createUser(request);
@@ -55,12 +65,13 @@ public class UserController {
     @GetMapping("/")
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "Get all users (ADMIN)", description = "Get all users and return the users")
-    public ResponseEntity<BaseResponse<List<UserDTO>>> getAllUsers() {
+    @RateLimitCategory(RateLimitCategoryType.RELAXED)
+    public ResponseEntity<BaseResponse<Page<UserDTO>>> getAllUsers(@PageableDefault(size = 20) Pageable pageable) {
         // call the get all method in the user service
-        List<UserDTO> userDTOList = userService.findAll();
+        Page<UserDTO> userDTOPage = userService.findAll(pageable);
 
         // return the response
-        return BaseResponse.ok(userDTOList).message("Users retrieved successfully").build();
+        return BaseResponse.ok(userDTOPage).message("Users retrieved successfully").build();
     }
 
     /**

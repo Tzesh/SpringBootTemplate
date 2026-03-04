@@ -1,0 +1,52 @@
+package com.tzesh.springtemplate.base.mapper;
+
+import com.tzesh.springtemplate.base.dto.field.BaseDTOAuditableFields;
+import com.tzesh.springtemplate.base.entity.field.BaseAuditableFields;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.mapstruct.factory.Mappers;
+
+import java.time.LocalDateTime;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+class AuditableMapperImplTest {
+    private final AuditableMapper mapper = Mappers.getMapper(AuditableMapper.class);
+
+    @Test
+    @DisplayName("Should map BaseAuditableFields to BaseDTOAuditableFields correctly")
+    void mapsEntityFieldsToDTOFields() {
+        // Arrange: create entity fields
+        BaseAuditableFields entity = new BaseAuditableFields();
+        entity.setCreatedBy("user1");
+        entity.setCreatedDate(LocalDateTime.of(2025, 9, 17, 10, 0));
+        entity.setUpdatedBy("user2");
+        entity.setUpdatedDate(LocalDateTime.of(2025, 9, 18, 11, 0));
+        // Act: map to DTO fields
+        BaseDTOAuditableFields dto = mapper.BaseAuditableFieldsToBaseDTOAuditableFields(entity);
+        // Assert: verify mapping
+        assertThat(dto.getCreatedBy()).isEqualTo("user1");
+        assertThat(dto.getCreatedDate()).isEqualTo(LocalDateTime.of(2025, 9, 17, 10, 0));
+        assertThat(dto.getUpdatedBy()).isEqualTo("user2");
+        assertThat(dto.getUpdatedDate()).isEqualTo(LocalDateTime.of(2025, 9, 18, 11, 0));
+    }
+
+    @Test
+    @DisplayName("Should map BaseDTOAuditableFields to BaseAuditableFields correctly")
+    void mapsDTOFieldsToEntityFields() {
+        // Arrange: create DTO fields
+        BaseDTOAuditableFields dto = new BaseDTOAuditableFields();
+        dto.setCreatedBy("userA");
+        dto.setCreatedDate(LocalDateTime.of(2025, 1, 1, 8, 0));
+        dto.setUpdatedBy("userB");
+        dto.setUpdatedDate(LocalDateTime.of(2025, 1, 2, 9, 0));
+        // Act: map to entity fields
+        BaseAuditableFields entity = mapper.BaseDTOAuditableFieldsToBaseAuditableFields(dto);
+        // Assert: verify mapping
+        assertThat(entity.getCreatedBy()).isEqualTo("userA");
+        assertThat(entity.getCreatedDate()).isEqualTo(LocalDateTime.of(2025, 1, 1, 8, 0));
+        assertThat(entity.getUpdatedBy()).isEqualTo("userB");
+        assertThat(entity.getUpdatedDate()).isEqualTo(LocalDateTime.of(2025, 1, 2, 9, 0));
+    }
+}
+

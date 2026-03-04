@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -41,6 +43,10 @@ public abstract class BaseService<E extends BaseEntity, D extends BaseDTO, R ext
 
     public List<D> findAll() {
         return mapper.toDTO(repository.findAll());
+    }
+
+    public Page<D> findAll(final Pageable pageable) {
+        return repository.findAll(pageable).map(mapper::toDTO);
     }
 
     public D save(final D dto) {

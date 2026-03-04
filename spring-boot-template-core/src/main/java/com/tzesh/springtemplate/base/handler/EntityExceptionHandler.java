@@ -2,8 +2,10 @@ package com.tzesh.springtemplate.base.handler;
 
 import com.tzesh.springtemplate.base.error.GenericErrorMessage;
 import com.tzesh.springtemplate.base.exception.BaseException;
+import com.tzesh.springtemplate.base.exception.IdempotencyException;
 import com.tzesh.springtemplate.base.exception.NotFoundException;
 import com.tzesh.springtemplate.base.exception.OperationFailedException;
+import com.tzesh.springtemplate.base.exception.RateLimitExceededException;
 import com.tzesh.springtemplate.base.response.BaseResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.core.Ordered;
@@ -77,6 +79,34 @@ public class EntityExceptionHandler extends ResponseEntityExceptionHandler {
         log.error("Save failed exception: {}", genericErrorMessage);
 
         return BaseResponse.error(genericErrorMessage, HttpStatus.INTERNAL_SERVER_ERROR).build();
+    }
+
+    /**
+     * handleRateLimitExceededException is a method to handle rate limit exceeded exception
+     * @param e exception
+     * @param webRequest web request
+     * @return ResponseEntity
+     */
+    @ExceptionHandler
+    public final ResponseEntity<BaseResponse<GenericErrorMessage>> handleRateLimitExceededException(RateLimitExceededException e, WebRequest webRequest) {
+        final GenericErrorMessage genericErrorMessage = new GenericErrorMessage(e, webRequest);
+        log.error("Rate limit exceeded: {}", genericErrorMessage);
+
+        return BaseResponse.error(genericErrorMessage, HttpStatus.TOO_MANY_REQUESTS).build();
+    }
+
+    /**
+     * handleIdempotencyException is a method to handle idempotency exception
+     * @param e exception
+     * @param webRequest web request
+     * @return ResponseEntity
+     */
+    @ExceptionHandler
+    public final ResponseEntity<BaseResponse<GenericErrorMessage>> handleIdempotencyException(IdempotencyException e, WebRequest webRequest) {
+        final GenericErrorMessage genericErrorMessage = new GenericErrorMessage(e, webRequest);
+        log.error("Idempotency exception: {}", genericErrorMessage);
+
+        return BaseResponse.error(genericErrorMessage, HttpStatus.CONFLICT).build();
     }
 
     /**

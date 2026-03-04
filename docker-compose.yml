@@ -15,8 +15,8 @@ services:
 
   app:
     build:
-      context: ./spring-boot-template-api
-      dockerfile: Dockerfile
+      context: .
+      dockerfile: spring-boot-template-api/Dockerfile
     container_name: spring_boot_template_api
     depends_on:
       - db

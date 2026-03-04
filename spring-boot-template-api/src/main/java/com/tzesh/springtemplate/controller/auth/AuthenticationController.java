@@ -6,6 +6,9 @@ import com.tzesh.springtemplate.request.auth.AuthorizationRequest;
 import com.tzesh.springtemplate.request.auth.LoginRequest;
 import com.tzesh.springtemplate.request.auth.RegisterRequest;
 import com.tzesh.springtemplate.service.auth.AuthenticationService;
+import com.tzesh.springtemplate.base.annotation.Idempotent;
+import com.tzesh.springtemplate.base.annotation.RateLimitCategory;
+import com.tzesh.springtemplate.base.annotation.RateLimitCategoryType;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 
 /**
  * @author tzesh
@@ -30,12 +34,14 @@ import java.io.IOException;
 @RequiredArgsConstructor
 @Validated
 @Tag(name = "Authentication Controller", description = "Authentication operations for users")
+@RateLimitCategory(RateLimitCategoryType.AUTHENTICATION)
 public class AuthenticationController {
 
     private final AuthenticationService authenticationService;
 
     @PostMapping("/register")
     @Operation(summary = "Register a new user", description = "Register a new user with the given details and return the authentication response")
+    @Idempotent(ttl = 1, timeUnit = TimeUnit.HOURS)
     public ResponseEntity<BaseResponse<AuthenticationResponse>> register(@RequestBody @Valid RegisterRequest request) {
         // call the register method in the authentication service
         AuthenticationResponse response = authenticationService.register(request);
